@@ -1,0 +1,62 @@
+@import "~bootstrap/scss/bootstrap";
+@import '~@fortawesome/fontawesome-free/scss/regular';
+@import '~@fortawesome/fontawesome-free/scss/solid';
+@import '~@fortawesome/fontawesome-free/scss/brands';
+
+html{
+  height: 100%;
+}
+
+body{
+  min-height: 100%;
+}
+
+body {
+  padding-top: 56px;
+}
+
+.pointer {
+  cursor: pointer !important;
+}
+
+.form-login {
+  max-width: 330px;
+}
+
+.form-registration {
+  max-width: 500px;
+}
+
+.form-login, .form-registration {
+  width: 100%;
+  padding: 15px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.card{
+  box-shadow: $box-shadow-sm;
+}
+
+.dynamic-shadow {
+  transition: $transition-base;
+
+  &:hover {
+    box-shadow: $box-shadow;
+  }
+}
+
+.no-avatar {
+  color: $white;
+  min-width: 50px;
+  height: 50px;
+  display: flex;
+  border-radius: 50%;
+  font-size: 26px;
+
+  span {
+    margin: 5px auto;
+  }
+}

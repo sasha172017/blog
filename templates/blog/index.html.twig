@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+
+    {% for i, post in posts %}
+
+        <div class="card my-4 dynamic-shadow">
+            {% if post.image is not empty %}
+                <img class="card-img-top" src="" alt="">
+            {% endif %}
+            <div class="card-body">
+                <h2 class="card-title">{{ post.title }}</h2>
+                <p class="card-text">
+                    {{ post.summary }}
+                </p>
+
+                <a href="{{ path('post_show', {'slug' : post.slug}) }}" class="btn btn-primary btn-sm">Read more</a>
+
+            </div>
+            <div class="card-footer text-muted d-flex justify-content-between">
+                <div class="">
+                    <span><i class="far fa-eye"></i> {{ post.views }}</span>
+                </div>
+
+                <div>
+                    <small class="pointer mr-3" data-toggle="tooltip" data-placement="top" title="Created: {{ post.createdAt|date('d F Y, H:m:s') }}">
+                        <i class="far fa-calendar-alt"></i> {{ post.updatedAt|date('d F Y, H:m') }}
+                    </small>
+                    <small class="">
+                        <i class="fas fa-user"></i> {{ post.author.nickname }}
+                    </small>
+                </div>
+
+            </div>
+        </div>
+
+    {% else %}
+        <div class="alert alert-primary my-4 text-center" role="alert">No records found!</div>
+    {% endfor %}
+
+{#    <ul class="pagination justify-content-center mb-4">#}
+{#        <li class="page-item">#}
+{#            <a class="page-link" href="#">&larr; Older</a>#}
+{#        </li>#}
+{#        <li class="page-item disabled">#}
+{#            <a class="page-link" href="#">Newer &rarr;</a>#}
+{#        </li>#}
+{#    </ul>#}
+{% endblock %}
+
+{% block sidebar %}
+
+    {{ include('default/user-block.html.twig') }}
+
+    {{ render(controller('App\\Controller\\CategoryController::list')) }}
+
+    {{ include('default/post-actions-block.html.twig', {'post' : null }) }}
+
+{% endblock %}

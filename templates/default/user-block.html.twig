@@ -1,0 +1,31 @@
+{% if app.user %}
+    <div class="card my-4">
+
+        <div class="card-header d-flex align-items-center">
+
+            <div class="mr-2 no-avatar bg-{{ color_by_key(app.user.color) }}">
+                <span>{{ app.user.nickname|first|upper }}</span>
+            </div>
+
+
+            <h5 class="mb-0">
+                {{ app.user.nickname }}
+            </h5>
+        </div>
+
+        <div>
+
+            <hr class="m-0">
+
+            <div class="p-3">
+                Favorites
+            </div>
+
+        </div>
+
+        <div class="card-footer text-center p-1">
+            <small class="text-muted">Created {{ app.user.createdAt|date('d.m.Y') }}</small>
+        </div>
+
+    </div>
+{% endif %}

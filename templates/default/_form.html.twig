@@ -1,0 +1,22 @@
+{{ form_start(form) }}
+
+<div class="row justify-content-center">
+    <div class="col-xl-{{ col|default('6') }}">
+        <div class="card my-4">
+            <div class="card-header text-center">
+                <h3>Create new Category</h3>
+            </div>
+
+            <div class="card-body">
+                {{ form_widget(form) }}
+            </div>
+
+            <div class="card-footer text-center">
+                <button class="btn btn-success ">{{ button_label|default('Save') }}</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{{ form_end(form) }}

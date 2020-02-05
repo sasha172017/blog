@@ -1,0 +1,7 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Post{% endblock %}
+
+{% block main %}
+    {{ include('post/_form.html.twig', {'header': 'Create new post'}) }}
+{% endblock %}

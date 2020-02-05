@@ -1,0 +1,5 @@
+{% if app.user and not app.user.active %}
+    <div class="mb-0 mt-4 alert alert-warning alert-dismissible fade show" role="alert">
+        <i class="fas fa-exclamation-circle"></i> Your account is not activated, follow the link in the activation letter! <a href="{{ path('app_resend_confirmation') }}" class="alert-link">Resend Email</a>
+    </div>
+{% endif %}

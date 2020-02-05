@@ -1,0 +1,60 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Post {{ post.title }}{% endblock %}
+
+{% block content %}
+
+    <div class="card my-4 ">
+        <div class="p-3">
+            <h5 class="d-inline mb-0">Categories: </h5>
+            {% for category in post.categories %}
+                <span class="my-1 badge badge-{{ color_by_key(category.color) }}">
+                    <h6 class="mb-0">{{ category.title }}</h6>
+                </span>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="card my-4 ">
+
+        {% if post.image is not empty %}
+            <img class="card-img-top" src="" alt="">
+        {% endif %}
+        <div class="card-body">
+            <h2 class="card-title">{{ post.title }}</h2>
+            <div class="blockquote-footer">{{ post.summary }}</div>
+
+            <hr>
+
+            {{ post.content | raw }}
+
+        </div>
+
+        <div class="card-footer text-muted d-flex justify-content-between">
+            <div class="">
+                <span><i class="far fa-eye"></i> {{ post.views }}</span>
+            </div>
+
+            <div>
+                <small class="pointer mr-3" data-toggle="tooltip" data-placement="top" title="Created: {{ post.createdAt|date('d F Y, H:m:s') }}">
+                    <i class="far fa-calendar-alt"></i> {{ post.updatedAt|date('d F Y, H:m') }}
+                </small>
+                <small class="">
+                    <i class="fas fa-user"></i> {{ post.author.nickname }}
+                </small>
+            </div>
+
+        </div>
+
+    </div>
+{% endblock %}
+
+{% block sidebar %}
+
+    {{ include('default/user-block.html.twig') }}
+
+    {{ render(controller('App\\Controller\\CategoryController::list')) }}
+
+    {{ include('default/post-actions-block.html.twig', { 'post' : post }) }}
+
+{% endblock %}

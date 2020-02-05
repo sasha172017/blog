@@ -1,0 +1,14 @@
+<div class="card my-4">
+    <div class="card-header">
+        <h5 class="mb-0">Categories</h5>
+    </div>
+    <div class="p-3">
+
+        {% for category in categories %}
+            <a href="{{ path('category_posts', {'slug' : category.slug}) }}" class="m-1 {{ category.color is not null ? 'badge badge-' ~ color_by_key(category.color) : null }}">
+                <h6 class="mb-0">{{ category.title }}</h6>
+            </a>
+        {% endfor %}
+
+    </div>
+</div>
