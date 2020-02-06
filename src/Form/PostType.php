@@ -17,6 +17,7 @@ class PostType extends AbstractType
 		$builder
 			->add('title')
 			->add('categories', EntityType::class, [
+				'attr'         => ['size' => 7],
 				'class'        => Category::class,
 				'required'     => true,
 				'choice_label' => static function ($category) {

@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Post;
+use App\Form\CommentType;
 use App\Form\PostType;
 use App\Security\Voter\PostVoter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -127,4 +128,20 @@ class PostController extends AbstractController
 
 		return $this->redirectToRoute('blog_index');
 	}
+
+	/**
+	 * @param Post $post
+	 *
+	 * @return Response
+	 */
+	public function commentForm(Post $post): Response
+	{
+		$form = $this->createForm(CommentType::class);
+
+		return $this->render('post/_comment-form.html.twig', [
+			'post' => $post,
+			'form' => $form->createView(),
+		]);
+	}
+
 }

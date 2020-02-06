@@ -1,0 +1,7 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit comment{% endblock %}
+
+{% block main %}
+    {{ include('comment/_form.html.twig', {'header': 'Edit comment', 'button_label': 'Update'}) }}
+{% endblock %}

@@ -70,33 +70,40 @@ class User implements UserInterface
 	 */
 	private $active;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $color;
+	/**
+	 * @ORM\Column(type="integer", nullable=true)
+	 */
+	private $color;
+
+	/**
+	 * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="author", orphanRemoval=true)
+	 * @ORM\OrderBy({"createdAt" = "DESC"})
+	 */
+	private $comments;
 
 	public function __construct()
-         	{
-         		$this->posts  = new ArrayCollection();
-         		$this->active = false;
-         	}
+	{
+		$this->posts    = new ArrayCollection();
+		$this->active   = false;
+		$this->comments = new ArrayCollection();
+	}
 
 	public function getId(): ?int
-         	{
-         		return $this->id;
-         	}
+	{
+		return $this->id;
+	}
 
 	public function getEmail(): ?string
-         	{
-         		return $this->email;
-         	}
+	{
+		return $this->email;
+	}
 
 	public function setEmail(string $email): self
-         	{
-         		$this->email = $email;
-         
-         		return $this;
-         	}
+	{
+		$this->email = $email;
+
+		return $this;
+	}
 
 	/**
 	 * A visual identifier that represents this user.
@@ -104,152 +111,186 @@ class User implements UserInterface
 	 * @see UserInterface
 	 */
 	public function getUsername(): string
-         	{
-         		return (string) $this->email;
-         	}
+	{
+		return (string) $this->email;
+	}
 
 	/**
 	 * @see UserInterface
 	 */
 	public function getRoles(): array
-         	{
-         		$roles = $this->roles;
-         		// guarantee every user at least has ROLE_USER
-         		$roles[] = self::ROLE_USER;
-         
-         		return array_unique($roles);
-         	}
+	{
+		$roles = $this->roles;
+		// guarantee every user at least has ROLE_USER
+		$roles[] = self::ROLE_USER;
+
+		return array_unique($roles);
+	}
 
 	public function setRoles(array $roles): self
-         	{
-         		$this->roles = $roles;
-         
-         		return $this;
-         	}
+	{
+		$this->roles = $roles;
+
+		return $this;
+	}
 
 	/**
 	 * @see UserInterface
 	 */
 	public function getPassword(): string
-         	{
-         		return (string) $this->password;
-         	}
+	{
+		return (string) $this->password;
+	}
 
 	public function setPassword(string $password): self
-         	{
-         		$this->password = $password;
-         
-         		return $this;
-         	}
+	{
+		$this->password = $password;
+
+		return $this;
+	}
 
 	/**
 	 * @see UserInterface
 	 */
 	public function getSalt()
-         	{
-         		// not needed when using the "bcrypt" algorithm in security.yaml
-         	}
+	{
+		// not needed when using the "bcrypt" algorithm in security.yaml
+	}
 
 	/**
 	 * @see UserInterface
 	 */
 	public function eraseCredentials()
-         	{
-         		// If you store any temporary, sensitive data on the user, clear it here
-         		// $this->plainPassword = null;
-         	}
+	{
+		// If you store any temporary, sensitive data on the user, clear it here
+		// $this->plainPassword = null;
+	}
 
 	public function getNickname(): ?string
-         	{
-         		return $this->nickname;
-         	}
+	{
+		return $this->nickname;
+	}
 
 	public function setNickname(string $nickname): self
-         	{
-         		$this->nickname = $nickname;
-         
-         		return $this;
-         	}
+	{
+		$this->nickname = $nickname;
+
+		return $this;
+	}
 
 	public function getDateOfBirth(): ?\DateTimeInterface
-         	{
-         		return $this->dateOfBirth;
-         	}
+	{
+		return $this->dateOfBirth;
+	}
 
 	public function setDateOfBirth(?\DateTimeInterface $dateOfBirth): self
-         	{
-         		$this->dateOfBirth = $dateOfBirth;
-         
-         		return $this;
-         	}
+	{
+		$this->dateOfBirth = $dateOfBirth;
+
+		return $this;
+	}
 
 	/**
 	 * @return Collection|Post[]
 	 */
 	public function getPosts(): Collection
-         	{
-         		return $this->posts;
-         	}
+	{
+		return $this->posts;
+	}
 
 	public function addPost(Post $post): self
-         	{
-         		if (!$this->posts->contains($post))
-         		{
-         			$this->posts[] = $post;
-         			$post->setAuthor($this);
-         		}
-         
-         		return $this;
-         	}
+	{
+		if (!$this->posts->contains($post))
+		{
+			$this->posts[] = $post;
+			$post->setAuthor($this);
+		}
+
+		return $this;
+	}
 
 	public function removePost(Post $post): self
-         	{
-         		if ($this->posts->contains($post))
-         		{
-         			$this->posts->removeElement($post);
-         			// set the owning side to null (unless already changed)
-         			if ($post->getAuthor() === $this)
-         			{
-         				$post->setAuthor(null);
-         			}
-         		}
-         
-         		return $this;
-         	}
+	{
+		if ($this->posts->contains($post))
+		{
+			$this->posts->removeElement($post);
+			// set the owning side to null (unless already changed)
+			if ($post->getAuthor() === $this)
+			{
+				$post->setAuthor(null);
+			}
+		}
+
+		return $this;
+	}
 
 	public function getVerificationToken(): ?string
-         	{
-         		return $this->verificationToken;
-         	}
+	{
+		return $this->verificationToken;
+	}
 
 	public function setVerificationToken(?string $verificationToken): self
-         	{
-         		$this->verificationToken = $verificationToken;
-         
-         		return $this;
-         	}
+	{
+		$this->verificationToken = $verificationToken;
+
+		return $this;
+	}
 
 	public function getActive(): ?bool
-         	{
-         		return $this->active;
-         	}
+	{
+		return $this->active;
+	}
 
 	public function setActive(bool $active): self
-         	{
-         		$this->active = $active;
-         
-         		return $this;
-         	}
+	{
+		$this->active = $active;
 
-    public function getColor(): ?int
-    {
-        return $this->color;
-    }
+		return $this;
+	}
 
-    public function setColor(?int $color): self
-    {
-        $this->color = $color;
+	public function getColor(): ?int
+	{
+		return $this->color;
+	}
 
-        return $this;
-    }
+	public function setColor(?int $color): self
+	{
+		$this->color = $color;
+
+		return $this;
+	}
+
+	/**
+	 * @return Collection|Comment[]
+	 */
+	public function getComments(): Collection
+	{
+		return $this->comments;
+	}
+
+	public function addComment(Comment $comment): self
+	{
+		if (!$this->comments->contains($comment))
+		{
+			$this->comments[] = $comment;
+			$comment->setAuthor($this);
+		}
+
+		return $this;
+	}
+
+	public function removeComment(Comment $comment): self
+	{
+		if ($this->comments->contains($comment))
+		{
+			$this->comments->removeElement($comment);
+			// set the owning side to null (unless already changed)
+			if ($comment->getAuthor() === $this)
+			{
+				$comment->setAuthor(null);
+			}
+		}
+
+		return $this;
+	}
 }
