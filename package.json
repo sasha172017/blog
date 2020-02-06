@@ -20,6 +20,7 @@
         "build": "encore production --progress"
     },
     "dependencies": {
-        "bootstrap-icons": "^1.0.0-alpha2"
+        "bootstrap-icons": "^1.0.0-alpha2",
+        "bs-custom-file-input": "^1.3.4"
     }
 }

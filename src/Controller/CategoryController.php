@@ -38,7 +38,8 @@ class CategoryController extends AbstractController
 	public function posts(Category $category): Response
 	{
 		return $this->render('blog/index.html.twig', [
-			'posts' => $category->getPosts()
+			'posts'    => $category->getPosts(),
+			'category' => $category
 		]);
 	}
 }

@@ -9,10 +9,16 @@ html{
 
 body{
   min-height: 100%;
+  background-image: url("/uploads/blog_bg.png");
+  background-repeat: repeat;
 }
 
 body {
   padding-top: 56px;
+}
+
+.sticky-sidebar{
+  top: 80px;
 }
 
 .pointer {

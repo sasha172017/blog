@@ -2,11 +2,23 @@
 
 {% block content %}
 
+    {% if category is defined %}
+        <div class="text-center my-4">
+            <h1>{{ category.title}} </h1>
+        </div>
+    {% endif %}
+
+    {% if user is defined %}
+        <div class="text-center my-4">
+            <h1>{{ user.nickname}} posts</h1>
+        </div>
+    {% endif %}
+
     {% for i, post in posts %}
 
         <div class="card my-4 dynamic-shadow">
             {% if post.image is not empty %}
-                <img class="card-img-top" src="" alt="">
+                <img class="card-img-top" src="{{ asset('uploads/posts/' ~ post.image) }}" alt="">
             {% endif %}
             <div class="card-body">
                 <h2 class="card-title">{{ post.title }}</h2>
@@ -51,10 +63,12 @@
 
 {% block sidebar %}
 
-    {{ include('default/user-block.html.twig') }}
+    <div class="sticky-top sticky-sidebar">
+        {{ include('default/user-block.html.twig') }}
 
-    {{ render(controller('App\\Controller\\CategoryController::list')) }}
+        {{ render(controller('App\\Controller\\CategoryController::list')) }}
 
-    {{ include('default/post-actions-block.html.twig', {'post' : null }) }}
+        {{ include('default/post-actions-block.html.twig') }}
+    </div>
 
 {% endblock %}

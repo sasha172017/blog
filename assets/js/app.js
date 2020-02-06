@@ -11,6 +11,8 @@ import '../scss/app.scss';
 // Need jQuery? Install it with "yarn add jquery", then uncomment to require it.
 import $ from 'jquery';
 
+import bsCustomFileInput from 'bs-custom-file-input'
+
 require('bootstrap');
 require('@fortawesome/fontawesome-free/css/all.min.css');
 require('@fortawesome/fontawesome-free/js/all.js');
@@ -20,4 +22,7 @@ $(function () {
 });
 $(function () {
 	$('[data-toggle="popover"]').popover()
+});
+$(document).ready(function () {
+	bsCustomFileInput.init()
 });

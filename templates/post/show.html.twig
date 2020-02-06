@@ -18,7 +18,7 @@
     <div class="card my-4 ">
 
         {% if post.image is not empty %}
-            <img class="card-img-top" src="" alt="">
+            <img class="card-img-top" src="{{ asset('uploads/posts/' ~ post.image) }}" alt="">
         {% endif %}
         <div class="card-body">
             <h2 class="card-title">{{ post.title }}</h2>
@@ -60,7 +60,7 @@
 
                 {% for comment in post.comments %}
 
-                    <div class="d-flex shadow-sm bd-callout bd-callout-{{ color_by_key(comment.author.color) }} border-{{ color_by_key(comment.author.color) }}">
+                    <div class="bg-white d-flex shadow-sm bd-callout bd-callout-{{ color_by_key(comment.author.color) }} border-{{ color_by_key(comment.author.color) }}">
 
                         <div class="mr-4 no-avatar bg-{{ color_by_key(comment.author.color) }}">
                             <span>{{ comment.author.nickname|first|upper }}</span>
@@ -106,10 +106,12 @@
 
 {% block sidebar %}
 
-    {{ include('default/user-block.html.twig') }}
+    <div class="sticky-top sticky-sidebar">
+        {{ include('default/user-block.html.twig') }}
 
-    {{ render(controller('App\\Controller\\CategoryController::list')) }}
+        {{ render(controller('App\\Controller\\CategoryController::list')) }}
 
-    {{ include('default/post-actions-block.html.twig', { 'post' : post }) }}
+        {{ include('default/post-actions-block.html.twig', { 'post' : post }) }}
+    </div>
 
 {% endblock %}

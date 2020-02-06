@@ -6,8 +6,10 @@ use App\Entity\Post;
 use App\Form\CommentType;
 use App\Form\PostType;
 use App\Security\Voter\PostVoter;
+use App\Services\FileUploader;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -26,9 +28,11 @@ class PostController extends AbstractController
 	 *
 	 * @param SluggerInterface $slugger
 	 *
+	 * @param FileUploader     $fileUploader
+	 *
 	 * @return Response
 	 */
-	public function new(Request $request, SluggerInterface $slugger): Response
+	public function new(Request $request, SluggerInterface $slugger, FileUploader $fileUploader): Response
 	{
 		$post = new Post();
 		$form = $this->createForm(PostType::class, $post);
@@ -37,6 +41,13 @@ class PostController extends AbstractController
 		if ($form->isSubmitted() && $form->isValid())
 		{
 			$data = $form->getData();
+
+			$image = $form->get('image')->getData();
+			if ($image)
+			{
+				$imageFileName = $fileUploader->upload($image, 'post_images_directory');
+				$post->setImage($imageFileName);
+			}
 
 			$post
 				->setAuthor($this->getUser())
@@ -81,9 +92,11 @@ class PostController extends AbstractController
 	 * @param Post             $post
 	 * @param SluggerInterface $slugger
 	 *
+	 * @param FileUploader     $fileUploader
+	 *
 	 * @return Response
 	 */
-	public function edit(Request $request, Post $post, SluggerInterface $slugger): Response
+	public function edit(Request $request, Post $post, SluggerInterface $slugger, FileUploader $fileUploader): Response
 	{
 		$this->denyAccessUnlessGranted(PostVoter::EDIT, $post, 'Authors can only edit this post!');
 
@@ -94,6 +107,14 @@ class PostController extends AbstractController
 		{
 			$post
 				->setSlug($slugger->slug($post->getTitle()));
+
+			$image = $form->get('image')->getData();
+			if ($image)
+			{
+				$imageFileName = $fileUploader->upload($image, 'post_images_directory');
+				@unlink($this->getParameter('post_images_directory') . '/' . $post->getImage());
+				$post->setImage($imageFileName);
+			}
 
 			$this->getDoctrine()->getManager()->flush();
 
@@ -121,6 +142,8 @@ class PostController extends AbstractController
 			$entityManager = $this->getDoctrine()->getManager();
 			$entityManager->remove($post);
 			$entityManager->flush();
+
+			@unlink($this->getParameter('post_images_directory') . '/' . $post->getImage());
 
 			$this->addFlash('success', sprintf('Post <b>%s</b> deleted!', $post->getTitle()));
 
