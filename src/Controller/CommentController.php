@@ -20,7 +20,7 @@ class CommentController extends AbstractController
 {
 	/**
 	 * @Route("/new/{id}", name="comment_new", methods={"GET","POST"})
-	 * @IsGranted("ROLE_USER")
+	 * @IsGranted("ROLE_USER_CONFIRMED")
 	 * @param Request $request
 	 * @param Post    $post
 	 *

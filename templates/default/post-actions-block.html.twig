@@ -1,56 +1,56 @@
-{% if app.user %}
-    <div class="card my-4">
-        <div class="card-header">
-            <h5 class="mb-0">Post actions</h5>
-        </div>
-        <div class="p-3">
-            {% if app.user.active %}
-                <a href="{{ path('post_new') }}" class="btn btn-success btn-sm my-1">
-                    <i class="fas fa-plus"></i> Add new post
-                </a>
-            {% else %}
-                <a href="{{ path('post_new') }}" class="btn btn-success btn-sm my-1 disabled" disabled="">
-                    <i class="fas fa-plus"></i> Add new post
-                </a>
-            {% endif %}
-
-            {% if post is defined and is_author(post) %}
-                <a href="{{ path('post_edit', {slug : post.slug}) }}" class="btn btn-primary btn-sm my-1"><i class="far fa-edit"></i>
-                    Edit</a>
-                {{ include('post/_delete_form.html.twig', {post: post}, with_context = false) }}
-            {% endif %}
-
-            <a href="{{ path('user_posts', {'nickname' : app.user.nickname}) }}" class="btn btn btn-info btn-sm my-1">
-                My posts <span class="badge badge-light">{{ app.user.posts|length }}</span>
-            </a>
-
-        </div>
-
-        {% if post is defined %}
-            <hr class="m-0">
-
-            <div class="py-2 px-3">
-                <small>Author: {{ post.author.nickname }}</small>
-            </div>
-
-            <hr class="m-0">
-
-            <div class="py-2 px-3">
-                <small>Views: {{ post.views }}</small>
-            </div>
-
-            <hr class="m-0">
-
-            <div class="py-2 px-3">
-                <small>Updated: {{ post.updatedAt|date('d F Y, H:m') }}</small>
-            </div>
-
-            <hr class="m-0">
-
-            <div class="py-2 px-3">
-                <small>Created: {{ post.createdAt|date('d F Y, H:m') }}</small>
-            </div>
-        {% endif %}
+<div class="card my-4">
+    <div class="card-header">
+        <h5 class="mb-0">Post actions</h5>
     </div>
-{% endif %}
 
+    {% if is_granted(constant('app\\Entity\\User::ROLE_USER_CONFIRMED')) %}
+
+        <div class="p-3 d-flex justify-content-around">
+
+            <div class="btn-group btn-group-sm w-100" role="group">
+                <a href="{{ path('post_rating_up', {'slug' : post.slug}) }}" class="btn btn-outline-success"><i class="fas fa-long-arrow-alt-up"></i>
+                    Rating up</a>
+                <a href="{{ path('post_rating_down', {'slug' : post.slug}) }}" class="btn btn-outline-danger"><i class="fas fa-long-arrow-alt-down"></i>
+                    Rating down</a>
+            </div>
+
+        </div>
+
+    {% endif %}
+
+    <hr class="m-0">
+    <div class="py-2 px-3 ">
+        <small>Total votes: {{ post.ratingUp + post.ratingDown }}</small>
+    </div>
+
+    <hr class="m-0">
+    <div class="py-2 px-3">
+        <small>Rating up: {{ post.ratingUp }}</small>
+    </div>
+
+    <hr class="m-0">
+    <div class="py-2 px-3">
+        <small>Rating down: {{ post.ratingDown }}</small>
+    </div>
+
+    <hr class="m-0">
+    <div class="py-2 px-3">
+        <small>Author:
+            <a href="{{ path('user_posts', {'nickname' : post.author.nickname}) }}">{{ post.author.nickname }}</a></small>
+    </div>
+
+    <hr class="m-0">
+    <div class="py-2 px-3">
+        <small>Views: {{ post.views }}</small>
+    </div>
+
+    <hr class="m-0">
+    <div class="py-2 px-3">
+        <small>Updated: {{ post.updatedAt|date('d F Y, H:m') }}</small>
+    </div>
+
+    <hr class="m-0">
+    <div class="py-2 px-3">
+        <small>Created: {{ post.createdAt|date('d F Y, H:m') }}</small>
+    </div>
+</div>

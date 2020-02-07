@@ -50,6 +50,8 @@ class PostFixtures extends Fixture implements OrderedFixtureInterface
 				->setViews(random_int(0, 50))
 				->setAuthor($user)
 				->addCategory($category)
+				->setRatingUp(random_int(0, 1000))
+				->setRatingDown(random_int(0, 500))
 				->setCreatedAt($time)
 				->setUpdatedAt($time);
 

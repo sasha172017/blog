@@ -41,7 +41,7 @@ class Category
 	private $posts;
 
 	/**
-	 * @ORM\Column(type="integer", nullable=true)
+	 * @ORM\Column(type="integer", options={"default":0})
 	 */
 	private $color;
 
@@ -114,7 +114,7 @@ class Category
 		return $this->color;
 	}
 
-	public function setColor(?int $color): self
+	public function setColor(int $color = 0): self
 	{
 		$this->color = $color;
 

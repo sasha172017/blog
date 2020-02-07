@@ -49,7 +49,7 @@ class Post
 	private $content;
 
 	/**
-	 * @ORM\Column(type="integer", nullable=true)
+	 * @ORM\Column(type="integer", options={"default":0})
 	 */
 	private $views;
 
@@ -69,6 +69,16 @@ class Post
 	 * @ORM\OrderBy({"createdAt" = "DESC"})
 	 */
 	private $comments;
+
+	/**
+	 * @ORM\Column(type="integer", options={"default":0})
+	 */
+	private $ratingUp;
+
+	/**
+	 * @ORM\Column(type="integer", options={"default":0})
+	 */
+	private $ratingDown;
 
 	public function __construct()
 	{
@@ -146,7 +156,7 @@ class Post
 		return $this->views;
 	}
 
-	public function setViews(?int $views): self
+	public function setViews(int $views = 0): self
 	{
 		$this->views = $views;
 
@@ -223,6 +233,30 @@ class Post
 				$comment->setPost(null);
 			}
 		}
+
+		return $this;
+	}
+
+	public function getRatingUp(): ?int
+	{
+		return $this->ratingUp;
+	}
+
+	public function setRatingUp(int $ratingUp = 0): self
+	{
+		$this->ratingUp = $ratingUp;
+
+		return $this;
+	}
+
+	public function getRatingDown(): ?int
+	{
+		return $this->ratingDown;
+	}
+
+	public function setRatingDown(int $ratingDown = 0): self
+	{
+		$this->ratingDown = $ratingDown;
 
 		return $this;
 	}

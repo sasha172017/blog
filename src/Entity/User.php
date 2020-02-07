@@ -19,7 +19,8 @@ class User implements UserInterface
 {
 	use Timestamps;
 
-	public const ROLE_USER = 'ROLE_USER';
+	public const ROLE_ADMIN = 'ROLE_ADMIN';
+	public const ROLE_USER_CONFIRMED = 'ROLE_USER_CONFIRMED';
 
 	/**
 	 * @ORM\Id()
@@ -66,12 +67,12 @@ class User implements UserInterface
 	private $verificationToken;
 
 	/**
-	 * @ORM\Column(type="boolean")
+	 * @ORM\Column(type="boolean", options={"default":0})
 	 */
 	private $active;
 
 	/**
-	 * @ORM\Column(type="integer", nullable=true)
+	 * @ORM\Column(type="integer", options={"default":0})
 	 */
 	private $color;
 
@@ -122,7 +123,7 @@ class User implements UserInterface
 	{
 		$roles = $this->roles;
 		// guarantee every user at least has ROLE_USER
-		$roles[] = self::ROLE_USER;
+		$roles[] = 'ROLE_USER';
 
 		return array_unique($roles);
 	}
@@ -241,7 +242,7 @@ class User implements UserInterface
 		return $this->active;
 	}
 
-	public function setActive(bool $active): self
+	public function setActive(bool $active = false): self
 	{
 		$this->active = $active;
 
@@ -253,7 +254,7 @@ class User implements UserInterface
 		return $this->color;
 	}
 
-	public function setColor(?int $color): self
+	public function setColor(int $color = 0): self
 	{
 		$this->color = $color;
 

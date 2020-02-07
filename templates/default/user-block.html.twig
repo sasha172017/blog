@@ -7,18 +7,33 @@
                 <span>{{ app.user.nickname|first|upper }}</span>
             </div>
 
-
-            <h5 class="mb-0">
+            <h5 class="mb-0 {{ is_granted(constant('app\\Entity\\User::ROLE_ADMIN')) ? 'text-danger' : '' }}">
                 {{ app.user.nickname }}
             </h5>
         </div>
 
         <div>
 
-            <hr class="m-0">
-
             <div class="p-3">
-                Favorites
+                {% if is_granted(constant('app\\Entity\\User::ROLE_USER_CONFIRMED')) %}
+                    <a href="{{ path('post_new') }}" class="btn btn-success btn-sm my-1">
+                        <i class="fas fa-plus"></i> Add new post
+                    </a>
+                {% else %}
+                    <a href="{{ path('post_new') }}" class="btn btn-success btn-sm my-1 disabled" disabled="">
+                        <i class="fas fa-plus"></i> Add new post
+                    </a>
+                {% endif %}
+
+                {% if post is defined and is_author(post) %}
+                    <a href="{{ path('post_edit', {slug : post.slug}) }}" class="btn btn-primary btn-sm my-1"><i class="far fa-edit"></i>
+                        Edit</a>
+                    {{ include('post/_delete_form.html.twig', {post: post}, with_context = false) }}
+                {% endif %}
+
+                <a href="{{ path('user_posts', {'nickname' : app.user.nickname}) }}" class="btn btn btn-info btn-sm my-1">
+                    My posts <span class="badge badge-light">{{ app.user.posts|length }}</span>
+                </a>
             </div>
 
         </div>

@@ -4,13 +4,13 @@
 
     {% if category is defined %}
         <div class="text-center my-4">
-            <h1>{{ category.title}} </h1>
+            <h1>{{ category.title }} </h1>
         </div>
     {% endif %}
 
     {% if user is defined %}
         <div class="text-center my-4">
-            <h1>{{ user.nickname}} posts</h1>
+            <h1>{{ user.nickname }} posts</h1>
         </div>
     {% endif %}
 
@@ -30,18 +30,39 @@
 
             </div>
             <div class="card-footer text-muted d-flex justify-content-between">
-                <div>
-                    <span class="mr-2"><i class="far fa-eye"></i> {{ post.views }}</span>
-                    <span class="mr-2"><i class="fas fa-comments"></i> {{ post.comments|length }}</span>
+
+                <div class="d-flex">
+                    <div class="mr-3" data-toggle="tooltip" data-placement="top" data-html="true" title="Views: {{ post.views }}">
+                        <i class="far fa-eye"></i> {{ post.views }}
+                    </div>
+                    <div class="mr-3" data-toggle="tooltip" data-placement="top" data-html="true" title="Comments: {{ post.comments|length }}">
+                        <i class="far fa-comments"></i> {{ post.comments|length }}
+                    </div>
+                    <div class="mr-3" data-toggle="tooltip" data-placement="top" data-html="true" title="Total votes: {{ post.ratingUp + post.ratingDown }}<br><i class='fas fa-long-arrow-alt-up'></i>{{ post.ratingUp }} <i class='fas fa-long-arrow-alt-down'></i>{{ post.ratingDown }}">
+                        <i class="fas fa-long-arrow-alt-up"></i>
+                        {% set rating = post.ratingUp - post.ratingDown %}
+                        {% if rating > 0 %}
+                            <span class="text-success">+{{ rating }}</span>
+                        {% else %}
+                            <span class="text-danger">{{ rating }}</span>
+                        {% endif %}
+                        <i class="fas fa-long-arrow-alt-down"></i>
+                    </div>
                 </div>
 
-                <div>
-                    <small class="pointer mr-3" data-toggle="tooltip" data-placement="top" title="Created: {{ post.createdAt|date('d F Y, H:m:s') }}">
-                        <i class="far fa-calendar-alt"></i> {{ post.updatedAt|date('d F Y, H:m') }}
-                    </small>
-                    <small class="">
-                        <i class="fas fa-user"></i> {{ post.author.nickname }}
-                    </small>
+                <div class="d-flex">
+                    <div class="pointer mr-3" data-toggle="tooltip" data-placement="top" title="Created: {{ post.createdAt|date('d F Y, H:m:s') }}">
+                        <small>
+                            <i class="far fa-calendar-alt"></i> {{ post.updatedAt|date('d F Y, H:m') }}
+                        </small>
+                    </div>
+
+                    <div class="cursor-pointer" data-container="body" data-toggle="popover" data-placement="top" data-html="true" data-content=" <a href='{{ path('user_posts', {'nickname' : post.author.nickname}) }}'>posts</a>">
+                        <small>
+                            <i class="fas fa-user"></i> {{ post.author.nickname }}
+                        </small>
+                    </div>
+
                 </div>
 
             </div>
@@ -63,8 +84,6 @@
         {{ include('default/user-block.html.twig') }}
 
         {{ render(controller('App\\Controller\\CategoryController::list')) }}
-
-        {{ include('default/post-actions-block.html.twig') }}
     </div>
 
 {% endblock %}

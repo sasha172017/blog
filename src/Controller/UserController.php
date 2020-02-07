@@ -3,7 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Repository\PostRepository;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -16,15 +19,25 @@ class UserController extends AbstractController
 {
 	/**
 	 * @Route("/{nickname}/posts", name="user_posts", methods={"GET"})
-	 * @param User $user
+	 * @param User               $user
+	 *
+	 * @param Request            $request
+	 * @param PostRepository     $postRepository
+	 * @param PaginatorInterface $paginator
 	 *
 	 * @return Response
 	 */
-	public function posts(User $user): Response
+	public function posts(User $user, Request $request, PostRepository $postRepository, PaginatorInterface $paginator): Response
 	{
-		return $this->render('blog/index.html.twig', [
-			'posts' => $user->getPosts(),
-			'user'  => $user
+		$pagination = $paginator->paginate(
+			$postRepository->paginationWithUser($user->getId()),
+			$request->query->getInt('page', 1),
+			PostController::LIMIT_PER_PAGE
+		);
+
+		return $this->render('post/index.html.twig', [
+			'pagination' => $pagination,
+			'user'   => $user
 		]);
 	}
 }

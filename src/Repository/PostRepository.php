@@ -15,18 +15,60 @@ use Doctrine\ORM\QueryBuilder;
  */
 class PostRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
-        parent::__construct($registry, Post::class);
-    }
+	public function __construct(ManagerRegistry $registry)
+	{
+		parent::__construct($registry, Post::class);
+	}
+
+	/**
+	 * @param QueryBuilder $query
+	 *
+	 * @return QueryBuilder
+	 */
+	private function paginationSort(QueryBuilder $query): QueryBuilder
+	{
+		return $query->orderBy('p.updatedAt', 'DESC');
+	}
 
 	/**
 	 * @return QueryBuilder
 	 */
-    public function query(): QueryBuilder
-    {
-	    return $this->createQueryBuilder('p')
-		    ->orderBy('p.createdAt', 'DESC')
-		    ;
-    }
+	public function paginationQuery(): QueryBuilder
+	{
+		$query = $this->createQueryBuilder('p');
+
+		return $this->paginationSort($query);
+	}
+
+	/**
+	 * @param int $categoryId
+	 *
+	 * @return QueryBuilder
+	 */
+	public function paginationWithCategory(int $categoryId): QueryBuilder
+	{
+		$query = $this->createQueryBuilder('p')
+			->addSelect('p', 'c')
+			->leftJoin('p.categories', 'c')
+			->where('c.id = :categoryId')
+			->setParameter('categoryId', $categoryId);
+
+		return $this->paginationSort($query);
+	}
+
+	/**
+	 * @param int $authorId
+	 *
+	 * @return QueryBuilder
+	 */
+	public function paginationWithUser(int $authorId): QueryBuilder
+	{
+		$query = $this->createQueryBuilder('p')
+			->addSelect('p', 'a')
+			->leftJoin('p.author', 'a')
+			->where('a.id = :authorId')
+			->setParameter('authorId', $authorId);
+
+		return $this->paginationSort($query);
+	}
 }

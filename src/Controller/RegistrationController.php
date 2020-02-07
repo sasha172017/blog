@@ -89,7 +89,7 @@ class RegistrationController extends AbstractController
 		{
 			$user
 				->setActive(true)
-				->setRoles([User::ROLE_USER]);
+				->setRoles([User::ROLE_USER_CONFIRMED]);
 
 			$entityManager = $this->getDoctrine()->getManager();
 			$entityManager->persist($user);
@@ -97,6 +97,11 @@ class RegistrationController extends AbstractController
 
 			$this->addFlash('success', sprintf('%s Congratulations, your account is activated!', '<i class="far fa-thumbs-up"></i>'));
 		}
+		else
+		{
+			$this->addFlash('danger', 'Failed to activate a profile!');
+		}
+
 
 		return $this->redirectToRoute('blog_index');
 	}

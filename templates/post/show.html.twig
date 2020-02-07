@@ -30,21 +30,6 @@
 
         </div>
 
-        <div class="card-footer text-muted d-flex justify-content-between">
-            <div class="">
-                <span><i class="far fa-eye"></i> {{ post.views }}</span>
-            </div>
-
-            <div>
-                <small class="pointer mr-3" data-toggle="tooltip" data-placement="top" title="Created: {{ post.createdAt|date('d F Y, H:m:s') }}">
-                    <i class="far fa-calendar-alt"></i> {{ post.updatedAt|date('d F Y, H:m') }}
-                </small>
-                <small class="">
-                    <i class="fas fa-user"></i> {{ post.author.nickname }}
-                </small>
-            </div>
-
-        </div>
     </div>
 
     {% if app.user %}
@@ -107,7 +92,7 @@
 {% block sidebar %}
 
     <div class="sticky-top sticky-sidebar">
-        {{ include('default/user-block.html.twig') }}
+        {{ include('default/user-block.html.twig', { 'post' : post }) }}
 
         {{ render(controller('App\\Controller\\CategoryController::list')) }}
 

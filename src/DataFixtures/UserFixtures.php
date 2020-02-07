@@ -42,7 +42,7 @@ class UserFixtures extends Fixture implements OrderedFixtureInterface
 					->setEmail('admin@blog.com')
 					->setNickname('admin')
 					->setPassword($this->passwordEncoder->encodePassword($user, 'admin'))
-					->setRoles(['ROLE_ADMIN']);
+					->setRoles([User::ROLE_ADMIN, User::ROLE_USER_CONFIRMED]);
 			}
 			else
 			{
@@ -50,7 +50,7 @@ class UserFixtures extends Fixture implements OrderedFixtureInterface
 					->setEmail($faker->email)
 					->setNickname($faker->userName)
 					->setPassword($this->passwordEncoder->encodePassword($user, 'blog'))
-					->setRoles(['ROLE_USER']);
+					->setRoles([User::ROLE_USER_CONFIRMED]);
 			}
 
 			$user

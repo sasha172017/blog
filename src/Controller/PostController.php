@@ -11,6 +11,7 @@ use App\Services\FileUploader;
 use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -33,7 +34,7 @@ class PostController extends AbstractController
 	public function index(Request $request, PostRepository $postRepository, PaginatorInterface $paginator): Response
 	{
 		$pagination = $paginator->paginate(
-			$postRepository->query(),
+			$postRepository->paginationQuery(),
 			$request->query->getInt('page', 1),
 			self::LIMIT_PER_PAGE
 		);
@@ -44,7 +45,7 @@ class PostController extends AbstractController
 
 	/**
 	 * @Route("/post/new", name="post_new", methods={"GET","POST"})
-	 * @IsGranted("ROLE_USER")
+	 * @IsGranted("ROLE_USER_CONFIRMED")
 	 * @param Request          $request
 	 *
 	 * @param SluggerInterface $slugger
@@ -186,6 +187,40 @@ class PostController extends AbstractController
 			'post' => $post,
 			'form' => $form->createView(),
 		]);
+	}
+
+	/**
+	 * @Route("/post/{slug}/ratingUp", name="post_rating_up", methods={"GET", "POST"})
+	 * @IsGranted("ROLE_USER")
+	 * @param Post $post
+	 *
+	 * @return RedirectResponse
+	 */
+	public function ratingUp(Post $post): RedirectResponse
+	{
+		$post->setRatingUp($post->getRatingUp() + 1);
+		$this->getDoctrine()->getManager()->flush();
+
+		$this->addFlash('success', 'Thank you for your opinion!');
+
+		return $this->redirectToRoute('post_show', ['slug' => $post->getSlug()]);
+	}
+
+	/**
+	 * @Route("/post/{slug}/ratingDown", name="post_rating_down", methods={"GET", "POST"})
+	 * @IsGranted("ROLE_USER")
+	 * @param Post $post
+	 *
+	 * @return RedirectResponse
+	 */
+	public function ratingDown(Post $post): RedirectResponse
+	{
+		$post->setRatingDown($post->getRatingDown() - 1);
+		$this->getDoctrine()->getManager()->flush();
+
+		$this->addFlash('success', 'Thank you for your opinion!');
+
+		return $this->redirectToRoute('post_show', ['slug' => $post->getSlug()]);
 	}
 
 }
