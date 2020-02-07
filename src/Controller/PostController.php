@@ -5,24 +5,45 @@ namespace App\Controller;
 use App\Entity\Post;
 use App\Form\CommentType;
 use App\Form\PostType;
+use App\Repository\PostRepository;
 use App\Security\Voter\PostVoter;
 use App\Services\FileUploader;
+use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
-/**
- * @Route("/post")
- */
+
 class PostController extends AbstractController
 {
+	public const LIMIT_PER_PAGE = 5;
 
 	/**
-	 * @Route("/new", name="post_new", methods={"GET","POST"})
+	 * @Route("/", name="blog_index")
+	 * @param Request            $request
+	 * @param PostRepository     $postRepository
+	 *
+	 * @param PaginatorInterface $paginator
+	 *
+	 * @return Response
+	 */
+	public function index(Request $request, PostRepository $postRepository, PaginatorInterface $paginator): Response
+	{
+		$pagination = $paginator->paginate(
+			$postRepository->query(),
+			$request->query->getInt('page', 1),
+			self::LIMIT_PER_PAGE
+		);
+
+		return $this->render('post/index.html.twig', ['pagination' => $pagination]);
+
+	}
+
+	/**
+	 * @Route("/post/new", name="post_new", methods={"GET","POST"})
 	 * @IsGranted("ROLE_USER")
 	 * @param Request          $request
 	 *
@@ -70,7 +91,7 @@ class PostController extends AbstractController
 	}
 
 	/**
-	 * @Route("/{slug}", name="post_show", methods={"GET"})
+	 * @Route("/post/{slug}", name="post_show", methods={"GET"})
 	 * @param Post $post
 	 *
 	 * @return Response
@@ -86,7 +107,7 @@ class PostController extends AbstractController
 	}
 
 	/**
-	 * @Route("/{slug}/edit", name="post_edit", methods={"GET","POST"})
+	 * @Route("/post/{slug}/edit", name="post_edit", methods={"GET","POST"})
 	 * @IsGranted("ROLE_USER")
 	 * @param Request          $request
 	 * @param Post             $post
@@ -128,7 +149,7 @@ class PostController extends AbstractController
 	}
 
 	/**
-	 * @Route("/{id}", name="post_delete", methods={"DELETE"})
+	 * @Route("/post/{id}", name="post_delete", methods={"DELETE"})
 	 * @IsGranted("ROLE_USER")
 	 * @param Request $request
 	 * @param Post    $post
