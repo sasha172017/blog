@@ -7,7 +7,6 @@ use App\Form\RegistrationFormType;
 use App\Repository\UserRepository;
 use App\Security\LoginFormAuthenticator;
 use App\Services\ConfirmationEmail;
-use App\Services\TokenGenerator;
 use App\Twig\BootstrapColorExtension;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -16,6 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
 use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
 
 class RegistrationController extends AbstractController
@@ -27,7 +27,7 @@ class RegistrationController extends AbstractController
 	 * @param GuardAuthenticatorHandler    $guardHandler
 	 * @param LoginFormAuthenticator       $authenticator
 	 *
-	 * @param TokenGenerator               $generator
+	 * @param TokenGeneratorInterface      $generator
 	 *
 	 * @param ConfirmationEmail            $email
 	 *
@@ -35,7 +35,7 @@ class RegistrationController extends AbstractController
 	 * @throws \Exception
 	 * @throws TransportExceptionInterface
 	 */
-	public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder, GuardAuthenticatorHandler $guardHandler, LoginFormAuthenticator $authenticator, TokenGenerator $generator, ConfirmationEmail $email): Response
+	public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder, GuardAuthenticatorHandler $guardHandler, LoginFormAuthenticator $authenticator, TokenGeneratorInterface $generator, ConfirmationEmail $email): Response
 	{
 		$user = new User();
 		$form = $this->createForm(RegistrationFormType::class, $user);
@@ -52,7 +52,7 @@ class RegistrationController extends AbstractController
 			);
 
 			$user
-				->setVerificationToken($generator->getToken())
+				->setVerificationToken($generator->generateToken())
 				->setColor(random_int(0, count(BootstrapColorExtension::COLORS_CLASS) - 1));
 
 			$entityManager = $this->getDoctrine()->getManager();

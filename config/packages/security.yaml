@@ -14,8 +14,16 @@ security:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+
+        api:
+            pattern: ^/api/
+            guard:
+                authenticators:
+                    - App\Security\ApiTokenAuthenticator
+
         main:
-            anonymous: lazy
+            anonymous: true
+
             guard:
                 authenticators:
                     - App\Security\LoginFormAuthenticator
@@ -33,4 +41,4 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        # - { path: ^/profile, roles: ROLE_USER_CONFIRMED }
+        #- { path: ^/api, roles: ROLE_USER }

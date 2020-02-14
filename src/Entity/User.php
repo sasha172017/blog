@@ -13,6 +13,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  * @UniqueEntity(fields={"email"}, message="There is already an account with this email")
  * @UniqueEntity(fields={"nickname"}, message="There is already an account with this nickname")
+ * @UniqueEntity(fields={"token"}, message="TOKEN already exists")
  * @ORM\HasLifecycleCallbacks
  */
 class User implements UserInterface
@@ -81,6 +82,11 @@ class User implements UserInterface
 	 * @ORM\OrderBy({"createdAt" = "DESC"})
 	 */
 	private $comments;
+
+	/**
+	 * @ORM\Column(type="string", length=255, nullable=true, unique=true)
+	 */
+	private $apiToken;
 
 	public function __construct()
 	{
@@ -291,6 +297,18 @@ class User implements UserInterface
 				$comment->setAuthor(null);
 			}
 		}
+
+		return $this;
+	}
+
+	public function getApiToken(): ?string
+	{
+		return $this->apiToken;
+	}
+
+	public function setApiToken(?string $apiToken): self
+	{
+		$this->apiToken = $apiToken;
 
 		return $this;
 	}
