@@ -34,6 +34,11 @@
                 <a href="{{ path('user_posts', {'nickname' : app.user.nickname}) }}" class="btn btn btn-info btn-sm my-1">
                     My posts <span class="badge badge-light">{{ app.user.posts|length }}</span>
                 </a>
+
+                <a href="{{ path('user_bookmarks', {'nickname' : app.user.nickname}) }}" class="btn btn btn-warning btn-sm my-1">
+                    <i class="far fa-bookmark"></i> Bookmarks <span class="badge badge-light">{{ app.user.bookmarks|length }}</span>
+                </a>
+
             </div>
 
         </div>

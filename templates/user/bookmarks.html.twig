@@ -1,0 +1,7 @@
+{% extends 'post/index.html.twig' %}
+
+{% block posts_header %}
+    <div class="text-center my-4">
+        <h1>Bookmarks <span class="badge badge-warning">{{user.bookmarks|length}}</span></h1>
+    </div>
+{% endblock %}

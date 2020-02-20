@@ -88,11 +88,17 @@ class User implements UserInterface
 	 */
 	private $apiToken;
 
+	/**
+	 * @ORM\ManyToMany(targetEntity="App\Entity\Post", inversedBy="users")
+	 */
+	private $bookmarks;
+
 	public function __construct()
 	{
-		$this->posts    = new ArrayCollection();
-		$this->active   = false;
-		$this->comments = new ArrayCollection();
+		$this->posts     = new ArrayCollection();
+		$this->active    = false;
+		$this->comments  = new ArrayCollection();
+		$this->bookmarks = new ArrayCollection();
 	}
 
 	public function getId(): ?int
@@ -309,6 +315,34 @@ class User implements UserInterface
 	public function setApiToken(?string $apiToken): self
 	{
 		$this->apiToken = $apiToken;
+
+		return $this;
+	}
+
+	/**
+	 * @return Collection|Post[]
+	 */
+	public function getBookmarks(): Collection
+	{
+		return $this->bookmarks;
+	}
+
+	public function addBookmark(Post $bookmark): self
+	{
+		if (!$this->bookmarks->contains($bookmark))
+		{
+			$this->bookmarks[] = $bookmark;
+		}
+
+		return $this;
+	}
+
+	public function removeBookmark(Post $bookmark): self
+	{
+		if ($this->bookmarks->contains($bookmark))
+		{
+			$this->bookmarks->removeElement($bookmark);
+		}
 
 		return $this;
 	}

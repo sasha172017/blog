@@ -80,10 +80,16 @@ class Post
 	 */
 	private $ratingDown;
 
+	/**
+	 * @ORM\ManyToMany(targetEntity="App\Entity\User", mappedBy="bookmarks")
+	 */
+	private $users;
+
 	public function __construct()
 	{
 		$this->categories = new ArrayCollection();
 		$this->comments   = new ArrayCollection();
+		$this->users      = new ArrayCollection();
 	}
 
 	public function getId(): ?int
@@ -257,6 +263,36 @@ class Post
 	public function setRatingDown(int $ratingDown = 0): self
 	{
 		$this->ratingDown = $ratingDown;
+
+		return $this;
+	}
+
+	/**
+	 * @return Collection|User[]
+	 */
+	public function getUsers(): Collection
+	{
+		return $this->users;
+	}
+
+	public function addUser(User $user): self
+	{
+		if (!$this->users->contains($user))
+		{
+			$this->users[] = $user;
+			$user->addBookmark($this);
+		}
+
+		return $this;
+	}
+
+	public function removeUser(User $user): self
+	{
+		if ($this->users->contains($user))
+		{
+			$this->users->removeElement($user);
+			$user->removeBookmark($this);
+		}
 
 		return $this;
 	}
