@@ -10,5 +10,5 @@ api_platform:
         versions: [3]
         api_keys:
             apiKey:
-                name: API-TOKEN
+                name: Authorization
                 type: header

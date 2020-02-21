@@ -24,12 +24,19 @@
                     </button>
                     <div class="collapse navbar-collapse" id="navbarResponsive">
                         <ul class="navbar-nav ml-auto">
+
                             <li class="nav-item active">
                                 <a class="nav-link" href="{{ path('blog_index') }}">Home
                                     <span class="sr-only">(current)</span>
                                 </a>
 
                             </li>
+
+                            <li class="nav-item ">
+                                <a class="nav-link" href="{{ path('api_entrypoint') }}">API</a>
+
+                            </li>
+
                             {#                    <li class="nav-item">#}
                             {#                        <a class="nav-link" href="#">Services</a>#}
                             {#                    </li>                   #}
@@ -39,7 +46,7 @@
                             <a href="{{ path('app_logout') }}" class="btn btn-outline-secondary btn-sm">({{ app.user.nickname }}) sign out</a>
                         {% else %}
                             <div class="btn-group btn-group-sm" role="group">
-                                <a href="{{ path('app_login') }}" class="btn btn-outline-info">Sign in</a>
+{#                                <a href="{{ path('app_login') }}" class="btn btn-outline-info">Sign in</a>#}
                                 <a href="{{ path('app_register') }}" class="btn btn-info">Sign up</a>
                             </div>
                         {% endif %}
@@ -67,7 +74,14 @@
                 <div class="col-md-4">
 
                     {% block sidebar %}
+                        <div class="sticky-top sticky-sidebar">
 
+{#                            {{ render(controller('App\\Controller\\SecurityController::login')) }}#}
+
+                            {{ include('default/user-block.html.twig') }}
+
+                            {{ render(controller('App\\Controller\\CategoryController::list')) }}
+                        </div>
                     {% endblock %}
 
                 </div>

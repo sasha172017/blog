@@ -20,15 +20,15 @@
 
                     <a href="{{ path('post_show', {'slug' : post.slug}) }}" class="btn btn-primary btn-sm">Read more</a>
 
-                    {% if in_bookmark(app.user, post) %}
-                        <a href="{{ path('user_remove_from_bookmarks', {'slug' : post.slug}) }}" class="btn btn-outline-secondary btn-sm" data-toggle="tooltip" data-placement="top" data-html="true" title="Remove from bookmarks"><i class="far fa-bookmark"></i></a>
-                    {% else %}
-                        <a href="{{ path('user_add_to_bookmark', {'slug' : post.slug}) }}" class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" data-html="true" title="Add to bookmarks"><i class="far fa-bookmark"></i></a>
+                    {% if app.user %}
+                        {% if in_bookmark(app.user, post) %}
+                            <a href="{{ path('user_remove_from_bookmarks', {'slug' : post.slug}) }}" class="btn btn-outline-secondary btn-sm" data-toggle="tooltip" data-placement="top" data-html="true" title="Remove from bookmarks"><i class="far fa-bookmark"></i></a>
+                        {% else %}
+                            <a href="{{ path('user_add_to_bookmark', {'slug' : post.slug}) }}" class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" data-html="true" title="Add to bookmarks"><i class="far fa-bookmark"></i></a>
+                        {% endif %}
                     {% endif %}
 
                 </div>
-
-
 
             </div>
             <div class="card-footer text-muted d-flex justify-content-between">
@@ -81,16 +81,6 @@
 
     <div class="d-flex justify-content-center">
         {{ knp_pagination_render(pagination) }}
-    </div>
-
-{% endblock %}
-
-{% block sidebar %}
-
-    <div class="sticky-top sticky-sidebar">
-        {{ include('default/user-block.html.twig') }}
-
-        {{ render(controller('App\\Controller\\CategoryController::list')) }}
     </div>
 
 {% endblock %}
