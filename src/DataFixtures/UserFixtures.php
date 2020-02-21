@@ -9,6 +9,7 @@ use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Faker\Factory;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
 
 class UserFixtures extends Fixture implements OrderedFixtureInterface
 {
@@ -16,9 +17,12 @@ class UserFixtures extends Fixture implements OrderedFixtureInterface
 
 	private $passwordEncoder;
 
-	public function __construct(UserPasswordEncoderInterface $passwordEncoder)
+	private $tokenGenerator;
+
+	public function __construct(UserPasswordEncoderInterface $passwordEncoder, TokenGeneratorInterface $tokenGenerator)
 	{
 		$this->passwordEncoder = $passwordEncoder;
+		$this->tokenGenerator  = $tokenGenerator;
 	}
 
 	/**
@@ -42,7 +46,8 @@ class UserFixtures extends Fixture implements OrderedFixtureInterface
 					->setEmail('admin@blog.com')
 					->setNickname('admin')
 					->setPassword($this->passwordEncoder->encodePassword($user, 'admin'))
-					->setRoles([User::ROLE_ADMIN, User::ROLE_USER_CONFIRMED]);
+					->setRoles([User::ROLE_ADMIN, User::ROLE_USER_CONFIRMED])
+					->setApiToken('admin');
 			}
 			else
 			{
@@ -50,7 +55,9 @@ class UserFixtures extends Fixture implements OrderedFixtureInterface
 					->setEmail($faker->email)
 					->setNickname($faker->userName)
 					->setPassword($this->passwordEncoder->encodePassword($user, 'blog'))
-					->setRoles([User::ROLE_USER_CONFIRMED]);
+					->setRoles([User::ROLE_USER_CONFIRMED])
+					->setApiToken($this->tokenGenerator->generateToken())
+				;
 			}
 
 			$user

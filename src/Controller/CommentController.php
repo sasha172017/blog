@@ -20,7 +20,7 @@ class CommentController extends AbstractController
 {
 	/**
 	 * @Route("/new/{id}", name="comment_new", methods={"GET","POST"})
-	 * @IsGranted("ROLE_USER_CONFIRMED")
+	 * @IsGranted("IS_AUTHENTICATED_FULLY")
 	 * @param Request $request
 	 * @param Post    $post
 	 *
@@ -47,10 +47,8 @@ class CommentController extends AbstractController
 			return $this->redirectToRoute('post_show', ['slug' => $post->getSlug()]);
 		}
 
-		return $this->render('comment/new.html.twig', [
-			'comment' => $comment,
-			'form'    => $form->createView(),
-		]);
+		$this->addFlash('danger', 'Error!');
+		return $this->redirectToRoute('post_show', ['slug' => $post->getSlug()]);
 	}
 
 	/**

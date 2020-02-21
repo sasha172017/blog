@@ -45,7 +45,7 @@ class PostRepository extends ServiceEntityRepository
 	 *
 	 * @return QueryBuilder
 	 */
-	public function paginationWithCategory(int $categoryId): QueryBuilder
+	public function categoryPosts(int $categoryId): QueryBuilder
 	{
 		$query = $this->createQueryBuilder('p')
 			->addSelect('p', 'c')
@@ -61,7 +61,7 @@ class PostRepository extends ServiceEntityRepository
 	 *
 	 * @return QueryBuilder
 	 */
-	public function paginationWithUser(int $authorId): QueryBuilder
+	public function userPosts(int $authorId): QueryBuilder
 	{
 		$query = $this->createQueryBuilder('p')
 			->addSelect('p', 'a')
@@ -71,4 +71,22 @@ class PostRepository extends ServiceEntityRepository
 
 		return $this->paginationSort($query);
 	}
+
+	/**
+	 * @param int $userId
+	 *
+	 * @return QueryBuilder
+	 */
+	public function userBookmarks(int $userId): QueryBuilder
+	{
+		$query = $this->createQueryBuilder('p')
+			->addSelect('p', 'u')
+			->leftJoin('p.users', 'u')
+			->where('u.id = :userId')
+			->setParameter('userId', $userId)
+		;
+
+		return $this->paginationSort($query);
+	}
+
 }

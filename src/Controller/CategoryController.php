@@ -45,12 +45,12 @@ class CategoryController extends AbstractController
 	public function posts(Category $category, Request $request, PostRepository $postRepository, PaginatorInterface $paginator): Response
 	{
 		$pagination = $paginator->paginate(
-			$postRepository->paginationWithCategory($category->getId()),
+			$postRepository->categoryPosts($category->getId()),
 			$request->query->getInt('page', 1),
 			PostController::LIMIT_PER_PAGE
 		);
 
-		return $this->render('post/index.html.twig', [
+		return $this->render('category/posts.html.twig', [
 			'pagination' => $pagination,
 			'category'   => $category
 		]);
