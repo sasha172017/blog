@@ -61,6 +61,7 @@ class PostType extends AbstractType
 						'mimeTypes' => [
 							'image/jpeg',
 							'image/png',
+							'image/gif'
 						],
 					])
 				],
