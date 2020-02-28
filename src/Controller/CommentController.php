@@ -12,6 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @Route("/comment")
@@ -26,7 +27,7 @@ class CommentController extends AbstractController
 	 *
 	 * @return Response
 	 */
-	public function new(Request $request, Post $post): Response
+	public function new(Request $request, Post $post, TranslatorInterface $translator): Response
 	{
 		$comment = new Comment();
 		$comment
@@ -42,12 +43,11 @@ class CommentController extends AbstractController
 			$entityManager->persist($comment);
 			$entityManager->flush();
 
-			$this->addFlash('success', 'Comment added!');
+			$this->addFlash('success', $translator->trans('comment.messages.success.added'));
 
 			return $this->redirectToRoute('post_show', ['slug' => $post->getSlug()]);
 		}
 
-		$this->addFlash('danger', 'Error!');
 		return $this->redirectToRoute('post_show', ['slug' => $post->getSlug()]);
 	}
 
@@ -58,9 +58,9 @@ class CommentController extends AbstractController
 	 *
 	 * @return Response
 	 */
-	public function edit(Request $request, Comment $comment): Response
+	public function edit(Request $request, Comment $comment, TranslatorInterface $translator): Response
 	{
-		$this->denyAccessUnlessGranted(CommentVoter::EDIT, $comment, 'Authors can only delete this comment!');
+		$this->denyAccessUnlessGranted(CommentVoter::EDIT, $comment, $translator->trans('comment.messages.access.edit'));
 
 		$form = $this->createForm(CommentType::class, $comment);
 		$form->handleRequest($request);
@@ -71,7 +71,7 @@ class CommentController extends AbstractController
 
 			$this->getDoctrine()->getManager()->flush();
 
-			$this->addFlash('success', 'Comment updated!');
+			$this->addFlash('success',  $translator->trans('comment.messages.success.updated'));
 
 			return $this->redirectToRoute('post_show', ['slug' => $data->getPost()->getSlug()]);
 		}
@@ -92,15 +92,15 @@ class CommentController extends AbstractController
 	 *
 	 * @return Response
 	 */
-	public function delete(Request $request, Comment $comment, Post $post): Response
+	public function delete(Request $request, Comment $comment, Post $post, TranslatorInterface $translator): Response
 	{
-		$this->denyAccessUnlessGranted(CommentVoter::DELETE, $comment, 'Authors can only delete this comment!');
+		$this->denyAccessUnlessGranted(CommentVoter::DELETE, $comment, $translator->trans('comment.messages.access.delete'));
 
 		$entityManager = $this->getDoctrine()->getManager();
 		$entityManager->remove($comment);
 		$entityManager->flush();
 
-		$this->addFlash('success', 'Comment deleted!');
+		$this->addFlash('success',  $translator->trans('comment.messages.success.deleted'));
 
 		return $this->redirectToRoute('post_show', ['slug' => $post->getSlug()]);
 	}

@@ -18,13 +18,13 @@
 
                 <div class="d-flex justify-content-between">
 
-                    <a href="{{ path('post_show', {'slug' : post.slug}) }}" class="btn btn-primary btn-sm">Read more</a>
+                    <a href="{{ path('post_show', {'slug' : post.slug}) }}" class="btn btn-primary btn-sm">{{ 'post.read_more'|trans }}</a>
 
                     {% if app.user %}
                         {% if in_bookmark(app.user, post) %}
-                            <a href="{{ path('user_remove_from_bookmarks', {'slug' : post.slug}) }}" class="btn btn-outline-secondary btn-sm" data-toggle="tooltip" data-placement="top" data-html="true" title="Remove from bookmarks"><i class="far fa-bookmark"></i></a>
+                            <a href="{{ path('user_remove_from_bookmarks', {'slug' : post.slug}) }}" class="btn btn-outline-secondary btn-sm" data-toggle="tooltip" data-placement="top" data-html="true" title="{{ 'post.bookmarks.remove'|trans }}"><i class="far fa-bookmark"></i></a>
                         {% else %}
-                            <a href="{{ path('user_add_to_bookmark', {'slug' : post.slug}) }}" class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" data-html="true" title="Add to bookmarks"><i class="far fa-bookmark"></i></a>
+                            <a href="{{ path('user_add_to_bookmark', {'slug' : post.slug}) }}" class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" data-html="true" title="{{ 'post.bookmarks.add'|trans }}"><i class="far fa-bookmark"></i></a>
                         {% endif %}
                     {% endif %}
 
@@ -34,13 +34,13 @@
             <div class="card-footer text-muted d-flex justify-content-between">
 
                 <div class="d-flex">
-                    <div class="mr-3" data-toggle="tooltip" data-placement="top" data-html="true" title="Views: {{ post.views }}">
+                    <div class="mr-3" data-toggle="tooltip" data-placement="top" data-html="true" title="{{ 'post.views'|trans }}: {{ post.views }}">
                         <i class="far fa-eye"></i> {{ post.views }}
                     </div>
-                    <div class="mr-3" data-toggle="tooltip" data-placement="top" data-html="true" title="Comments: {{ post.comments|length }}">
+                    <div class="mr-3" data-toggle="tooltip" data-placement="top" data-html="true" title="{{ 'post.comments'|trans }}: {{ post.comments|length }}">
                         <i class="far fa-comments"></i> {{ post.comments|length }}
                     </div>
-                    <div class="mr-3" data-toggle="tooltip" data-placement="top" data-html="true" title="Total votes: {{ post.ratingUp + post.ratingDown }}<br><i class='fas fa-long-arrow-alt-up'></i>{{ post.ratingUp }} <i class='fas fa-long-arrow-alt-down'></i>{{ post.ratingDown }}">
+                    <div class="mr-3" data-toggle="tooltip" data-placement="top" data-html="true" title="{{ 'post.rating.title'|trans }}: {{ post.ratingUp + post.ratingDown }}<br><i class='fas fa-long-arrow-alt-up'></i>{{ post.ratingUp }} <i class='fas fa-long-arrow-alt-down'></i>{{ post.ratingDown }}">
                         <i class="fas fa-long-arrow-alt-up"></i>
                         {% set rating = post.ratingUp - post.ratingDown %}
                         {% if rating > 0 %}
@@ -51,20 +51,20 @@
                         <i class="fas fa-long-arrow-alt-down"></i>
                     </div>
 
-                    <div class="mr-3" data-toggle="tooltip" data-placement="top" data-html="true" title="Number of users bookmarked">
+                    <div class="mr-3" data-toggle="tooltip" data-placement="top" data-html="true" title="{{ 'post.bookmarks.user_count'|trans }}">
                         <i class="far fa-bookmark"></i> {{ post.users|length }}
                     </div>
 
                 </div>
 
                 <div class="d-flex">
-                    <div class="pointer mr-3" data-toggle="tooltip" data-placement="top" title="Created: {{ post.createdAt|date('d F Y, H:m:s') }}">
+                    <div class="pointer mr-3" data-toggle="tooltip" data-placement="top" title="{{ 'app.created'|trans }}: {{ post.createdAt|date('d F Y, H:m:s') }}">
                         <small>
                             <i class="far fa-calendar-alt"></i> {{ post.updatedAt|date('d F Y, H:m') }}
                         </small>
                     </div>
 
-                    <div class="cursor-pointer" data-container="body" data-toggle="popover" data-placement="top" data-html="true" data-content=" <a href='{{ path('user_posts', {'nickname' : post.author.nickname}) }}'>posts</a>">
+                    <div class="cursor-pointer" data-container="body" data-toggle="popover" data-placement="top" data-html="true" data-content=" <a href='{{ path('user_posts', {'nickname' : post.author.nickname}) }}'>{{ 'post.user_posts'|trans }}</a>">
                         <small>
                             <i class="fas fa-user"></i> {{ post.author.nickname }}
                         </small>

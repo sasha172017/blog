@@ -6,7 +6,7 @@
 
     <div class="card my-4 ">
         <div class="py-2 px-3">
-            <h5 class="d-inline mb-0">Categories: </h5>
+            <h5 class="d-inline mb-0">{{ 'category.title'|trans }}: </h5>
             {% for category in post.categories %}
                 <span class="my-1 badge badge-{{ color_by_key(category.color) }}">
                     <h6 class="mb-0">{{ category.title }}</h6>
@@ -41,7 +41,7 @@
         <div class="row justify-content-center">
             <div class="col-xl-10">
                 <hr>
-                <span class="badge badge-secondary"><i class="fas fa-comments"></i> {{ post.comments|length }} comments</span>
+                <span class="badge badge-secondary"><i class="fas fa-comments"></i> {{ post.comments|length }} {{ 'comment.count_comments'|trans }}</span>
 
                 {% for comment in post.comments %}
 
@@ -60,8 +60,8 @@
 
                                 {% if is_author(comment) %}
                                     <div class="d-flex">
-                                        <a href="{{ path('comment_edit', {'id' : comment.id}) }}" class="btn btn-outline-primary btn-sm border-0"><i class="fas fa-pencil-alt"></i></a>
-                                        <a href="{{ path('comment_delete', {'id' : comment.id, 'post_id' : post.id}) }}" class="btn btn-sm btn-outline-danger border-0"><i class="fas fa-trash"></i></a>
+                                        <a href="{{ path('comment_edit', {'id' : comment.id}) }}" class="btn btn-outline-primary btn-sm border-0" data-toggle="tooltip" data-placement="top" data-html="true" title="{{ 'app.edit'|trans }}"><i class="fas fa-pencil-alt"></i></a>
+                                        <a href="{{ path('comment_delete', {'id' : comment.id, 'post_id' : post.id}) }}" class="btn btn-sm btn-outline-danger border-0" data-toggle="tooltip" data-placement="top" data-html="true" title="{{ 'app.delete'|trans }}"><i class="fas fa-trash"></i></a>
                                     </div>
                                 {% endif %}
 
@@ -91,7 +91,7 @@
 
 {% block sidebar %}
 
-    <div class="sticky-top sticky-sidebar">
+    <div class="">
         {{ include('default/user-block.html.twig', { 'post' : post }) }}
 
         {{ render(controller('App\\Controller\\CategoryController::list')) }}

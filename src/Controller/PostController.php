@@ -16,6 +16,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 
 class PostController extends AbstractController
@@ -33,6 +34,8 @@ class PostController extends AbstractController
 	 */
 	public function index(Request $request, PostRepository $postRepository, PaginatorInterface $paginator): Response
 	{
+		$locale = $request->getLocale();
+
 		$pagination = $paginator->paginate(
 			$postRepository->paginationQuery(),
 			$request->query->getInt('page', 1),
@@ -110,17 +113,19 @@ class PostController extends AbstractController
 	/**
 	 * @Route("/post/{slug}/edit", name="post_edit", methods={"GET","POST"})
 	 * @IsGranted("ROLE_USER")
-	 * @param Request          $request
-	 * @param Post             $post
-	 * @param SluggerInterface $slugger
+	 * @param Request             $request
+	 * @param Post                $post
+	 * @param SluggerInterface    $slugger
 	 *
-	 * @param FileUploader     $fileUploader
+	 * @param FileUploader        $fileUploader
+	 *
+	 * @param TranslatorInterface $translator
 	 *
 	 * @return Response
 	 */
-	public function edit(Request $request, Post $post, SluggerInterface $slugger, FileUploader $fileUploader): Response
+	public function edit(Request $request, Post $post, SluggerInterface $slugger, FileUploader $fileUploader, TranslatorInterface $translator): Response
 	{
-		$this->denyAccessUnlessGranted(PostVoter::EDIT, $post, 'Authors can only edit this post!');
+		$this->denyAccessUnlessGranted(PostVoter::EDIT, $post, $translator->trans('post.messages.access.edit'));
 
 		$form = $this->createForm(PostType::class, $post);
 		$form->handleRequest($request);
@@ -152,12 +157,14 @@ class PostController extends AbstractController
 	/**
 	 * @Route("/post/{id}", name="post_delete", methods={"DELETE"})
 	 * @IsGranted("ROLE_USER")
-	 * @param Request $request
-	 * @param Post    $post
+	 * @param Request             $request
+	 * @param Post                $post
+	 *
+	 * @param TranslatorInterface $translator
 	 *
 	 * @return Response
 	 */
-	public function delete(Request $request, Post $post): Response
+	public function delete(Request $request, Post $post, TranslatorInterface $translator): Response
 	{
 		if ($this->isCsrfTokenValid('delete' . $post->getId(), $request->request->get('_token')))
 		{
@@ -167,7 +174,7 @@ class PostController extends AbstractController
 
 			@unlink($this->getParameter('post_images_directory') . '/' . $post->getImage());
 
-			$this->addFlash('success', sprintf('Post <b>%s</b> deleted!', $post->getTitle()));
+			$this->addFlash('success', sprintf($translator->trans('post.messages.success.deleted'), $post->getTitle()));
 
 		}
 
@@ -190,35 +197,39 @@ class PostController extends AbstractController
 	}
 
 	/**
-	 * @Route("/post/{slug}/ratingUp", name="post_rating_up", methods={"GET", "POST"})
+	 * @Route("/post/{slug}/rating-up", name="post_rating_up", methods={"GET", "POST"})
 	 * @IsGranted("ROLE_USER")
-	 * @param Post $post
+	 * @param Post                $post
+	 *
+	 * @param TranslatorInterface $translator
 	 *
 	 * @return RedirectResponse
 	 */
-	public function ratingUp(Post $post): RedirectResponse
+	public function ratingUp(Post $post, TranslatorInterface $translator): RedirectResponse
 	{
 		$post->setRatingUp($post->getRatingUp() + 1);
 		$this->getDoctrine()->getManager()->flush();
 
-		$this->addFlash('success', 'Thank you for your opinion!');
+		$this->addFlash('success', $translator->trans('post.messages.rating'));
 
 		return $this->redirectToRoute('post_show', ['slug' => $post->getSlug()]);
 	}
 
 	/**
-	 * @Route("/post/{slug}/ratingDown", name="post_rating_down", methods={"GET", "POST"})
+	 * @Route("/post/{slug}/rating-down", name="post_rating_down", methods={"GET", "POST"})
 	 * @IsGranted("ROLE_USER")
-	 * @param Post $post
+	 * @param Post                $post
+	 *
+	 * @param TranslatorInterface $translator
 	 *
 	 * @return RedirectResponse
 	 */
-	public function ratingDown(Post $post): RedirectResponse
+	public function ratingDown(Post $post, TranslatorInterface $translator): RedirectResponse
 	{
 		$post->setRatingDown($post->getRatingDown() - 1);
 		$this->getDoctrine()->getManager()->flush();
 
-		$this->addFlash('success', 'Thank you for your opinion!');
+		$this->addFlash('success', $translator->trans('post.messages.rating'));
 
 		return $this->redirectToRoute('post_show', ['slug' => $post->getSlug()]);
 	}

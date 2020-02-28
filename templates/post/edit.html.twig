@@ -3,5 +3,5 @@
 {% block title %}Edit {{ post.title }}{% endblock %}
 
 {% block main %}
-    {{ include('post/_form.html.twig', {'header': 'Edit ' ~ post.title, 'button_label': 'Update'}) }}
+    {{ include('post/_form.html.twig', {'header': 'Edit ' ~ post.title}) }}
 {% endblock %}

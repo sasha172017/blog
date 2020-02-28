@@ -17,34 +17,30 @@
             <div class="p-3">
                 {% if is_granted(constant('app\\Entity\\User::ROLE_USER_CONFIRMED')) %}
                     <a href="{{ path('post_new') }}" class="btn btn-success btn-sm my-1">
-                        <i class="fas fa-plus"></i> Add new post
+                        <i class="fas fa-plus"></i> {{ 'post.add_new_post'|trans }}
                     </a>
                 {% else %}
                     <a href="{{ path('post_new') }}" class="btn btn-success btn-sm my-1 disabled" disabled="">
-                        <i class="fas fa-plus"></i> Add new post
+                        <i class="fas fa-plus"></i> {{ 'post.add_new_post'|trans }}
                     </a>
                 {% endif %}
 
                 {% if post is defined and is_author(post) %}
                     <a href="{{ path('post_edit', {slug : post.slug}) }}" class="btn btn-primary btn-sm my-1"><i class="far fa-edit"></i>
-                        Edit</a>
+                        {{ 'app.edit'|trans }}</a>
                     {{ include('post/_delete_form.html.twig', {post: post}, with_context = false) }}
                 {% endif %}
 
                 <a href="{{ path('user_posts', {'nickname' : app.user.nickname}) }}" class="btn btn btn-info btn-sm my-1">
-                    My posts <span class="badge badge-light">{{ app.user.posts|length }}</span>
+                    {{ 'post.my_posts'|trans }} <span class="badge badge-light">{{ app.user.posts|length }}</span>
                 </a>
 
                 <a href="{{ path('user_bookmarks', {'nickname' : app.user.nickname}) }}" class="btn btn btn-warning btn-sm my-1">
-                    <i class="far fa-bookmark"></i> Bookmarks <span class="badge badge-light">{{ app.user.bookmarks|length }}</span>
+                    <i class="far fa-bookmark"></i> {{ 'post.bookmarks.title'|trans }} <span class="badge badge-light">{{ app.user.bookmarks|length }}</span>
                 </a>
 
             </div>
 
-        </div>
-
-        <div class="card-footer text-center p-1">
-            <small class="text-muted">Created {{ app.user.createdAt|date('d.m.Y') }}</small>
         </div>
 
     </div>

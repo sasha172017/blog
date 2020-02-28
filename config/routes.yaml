@@ -3,5 +3,14 @@
 #    controller: App\Controller\DefaultController::index
 
 authentication_token:
-  path: /authentication_token
+  path: /api/authentication
   methods: ['POST']
+
+blog_index:
+  path:       /{_locale}
+  controller: App\Controller\PostController::index
+  requirements:
+    _locale: '%app_locales%'
+  defaults:
+    template: base.html.twig
+    _locale: '%locale%'

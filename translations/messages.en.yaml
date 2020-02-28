@@ -1,0 +1,100 @@
+app:
+  title: 'Welcome'
+  blog: 'Blog'
+  sign_out: 'Sign out'
+  sign_in: 'Sign in'
+  sign_up: 'Sign up'
+  save: 'Save'
+  edit: 'Edit'
+  delete: 'Delete'
+  created: 'Created'
+  updated: 'Updated'
+  registration: 'Registration'
+  new_user: 'New User Registration'
+  auth:
+    email: 'Email'
+    nickname: 'Nickname'
+    locale: 'Locale'
+    date_of_birth: 'Date of birth'
+    password: 'Password'
+    repeat_password: 'Repeat Password'
+    active_profile: 'Your account is not activated, follow the link in the activation letter!'
+    resend_email: 'Resend Email'
+    messages:
+      confirmation:
+        success: '%s, your account is activated!'
+        error: 'Failed to activate a profile!'
+      resend_confirmation:
+        success: 'Email send success!'
+        error: 'Email send fail!'
+
+navbar:
+  nav-item:
+    home: 'Home'
+
+post:
+  posts: 'Posts'
+  user_posts: 'User posts'
+  read_more: 'Read more'
+  new: 'New post'
+  create_new: 'Create new post'
+
+  bookmarks:
+    title: 'Bookmarks'
+    remove: 'Remove from bookmarks'
+    add: 'Add to bookmarks'
+    user_count: 'Number of users bookmarked'
+    messages:
+      add: 'Post <b>%s</b> added to bookmark!'
+      delete: 'Post <b>%s</b> removed from bookmarks!'
+
+
+  views: 'Views'
+  comments: 'Comments'
+  add_new_post: 'Add new post'
+  my_posts: 'My posts'
+  actions: 'Post actions'
+
+  rating:
+    title: 'Rating'
+    up: 'Rating up'
+    down: 'Rating down'
+
+  messages:
+    rating: 'Thank you for your opinion!'
+    access:
+      edit: 'Authors can only edit this post!'
+
+    success:
+      added: 'Post <b>%s</b> added!'
+      deleted: 'Post <b>%s</b> deleted!'
+
+  author: 'Author'
+  confirm:
+    delete: 'Are you sure you want to delete this post?'
+
+  form:
+    title: 'Title'
+    categories: 'Categories'
+    summary: 'Summary'
+    image: 'Image'
+    content: 'Content'
+
+category:
+  title: 'Categories'
+
+comment:
+  count_comments: 'comments'
+  publish: 'Publish comment'
+  messages:
+    access:
+      edit: 'Authors can only edit this comment!'
+      delete: 'Authors can only delete this comment!'
+
+    success:
+      added: 'Comment added!'
+      updated: 'Comment updated!'
+      deleted: 'Comment deleted!'
+
+
+

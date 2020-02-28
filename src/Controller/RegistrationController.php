@@ -17,6 +17,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
 use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class RegistrationController extends AbstractController
 {
@@ -77,12 +78,14 @@ class RegistrationController extends AbstractController
 
 	/**
 	 * @Route("/confirmation/{token}", name="app_confirmation_register")
-	 * @param UserRepository $userRepository
-	 * @param string         $token
+	 * @param UserRepository      $userRepository
+	 * @param string              $token
+	 *
+	 * @param TranslatorInterface $translator
 	 *
 	 * @return RedirectResponse
 	 */
-	public function confirmation(UserRepository $userRepository, string $token): RedirectResponse
+	public function confirmation(UserRepository $userRepository, string $token, TranslatorInterface $translator): RedirectResponse
 	{
 		$user = $userRepository->findOneBy(['active' => false, 'verificationToken' => $token]);
 		if ($user !== null)
@@ -95,11 +98,11 @@ class RegistrationController extends AbstractController
 			$entityManager->persist($user);
 			$entityManager->flush();
 
-			$this->addFlash('success', sprintf('%s Congratulations, your account is activated!', '<i class="far fa-thumbs-up"></i>'));
+			$this->addFlash('success', sprintf($translator->trans('app.auth.messages.confirmation.success'), '<i class="far fa-thumbs-up"></i>'));
 		}
 		else
 		{
-			$this->addFlash('danger', 'Failed to activate a profile!');
+			$this->addFlash('danger', $translator->trans('app.auth.messages.confirmation.error'));
 		}
 
 
@@ -108,15 +111,24 @@ class RegistrationController extends AbstractController
 
 	/**
 	 * @Route("/resend-confiramtion", name="app_resend_confirmation")
-	 * @param ConfirmationEmail $email
+	 * @param ConfirmationEmail   $email
+	 *
+	 * @param TranslatorInterface $translator
 	 *
 	 * @return RedirectResponse
 	 * @throws TransportExceptionInterface
 	 */
-	public function resendConfirmation(ConfirmationEmail $email): RedirectResponse
+	public function resendConfirmation(ConfirmationEmail $email, TranslatorInterface $translator): RedirectResponse
 	{
 		$user = $this->getUser();
-		$email->send($user);
+		if ($email->send($user))
+		{
+			$this->addFlash('success', $translator->trans('app.auth.messages.resend_confirmation.success'));
+		}
+		else
+		{
+			$this->addFlash('danger', $translator->trans('app.auth.messages.resend_confirmation.error'));
+		}
 
 		return $this->redirectToRoute('blog_index');
 	}

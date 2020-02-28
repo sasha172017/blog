@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}New Post{% endblock %}
+{% block title %}{{'post.new'|trans}}{% endblock %}
 
 {% block main %}
-    {{ include('post/_form.html.twig', {'header': 'Create new post'}) }}
+    {{ include('post/_form.html.twig', {'header': 'post.create_new'|trans}) }}
 {% endblock %}

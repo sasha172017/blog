@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <title>{% block title %}Welcome!{% endblock %}</title>
+    <title>{% block title %}{{'app.title'|trans}}!{% endblock %}</title>
     {% block stylesheets %}
         {{ encore_entry_link_tags('app') }}
     {% endblock %}
@@ -18,7 +18,9 @@
                 <div class="container">
                     <a class="navbar-brand badge badge-{{ random_color() }}" href="{{ path('blog_index') }}">
                         <h4 class="mb-0">
-                            Blog</h4></a>
+                            {{ 'app.blog'|trans }}
+                        </h4>
+                    </a>
                     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>
@@ -26,7 +28,7 @@
                         <ul class="navbar-nav ml-auto">
 
                             <li class="nav-item active">
-                                <a class="nav-link" href="{{ path('blog_index') }}">Home
+                                <a class="nav-link" href="{{ path('blog_index') }}">{{ 'navbar.nav-item.home'|trans }}
                                     <span class="sr-only">(current)</span>
                                 </a>
 
@@ -37,17 +39,30 @@
 
                             </li>
 
-                            {#                    <li class="nav-item">#}
-                            {#                        <a class="nav-link" href="#">Services</a>#}
-                            {#                    </li>                   #}
+                            <li class="nav-item dropdown">
+                                <span class="nav-link active dropdown-toggle text-info" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fas fa-globe"></i>
+                                </span>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+
+                                    {% for code, name in locales() %}
+                                        <a class="dropdown-item {{ app.request.get('_locale') == code ? 'active' : '' }}" href="{{ path(app.request.get('_route', 'blog_index'), app.request.get('_route_params', [])|merge({_locale: code})) }}">
+                                            {{ name|capitalize }}
+                                        </a>
+                                    {% endfor %}
+
+
+                                </div>
+                            </li>
+
                         </ul>
 
                         {% if app.user %}
-                            <a href="{{ path('app_logout') }}" class="btn btn-outline-secondary btn-sm">({{ app.user.nickname }}) sign out</a>
+                            <a href="{{ path('app_logout') }}" class="btn btn-outline-secondary btn-sm">({{ app.user.nickname }}) {{ 'app.sign_out'|trans }}</a>
                         {% else %}
                             <div class="btn-group btn-group-sm" role="group">
-{#                                <a href="{{ path('app_login') }}" class="btn btn-outline-info">Sign in</a>#}
-                                <a href="{{ path('app_register') }}" class="btn btn-info">Sign up</a>
+                                <a href="{{ path('app_login') }}" class="btn btn-outline-info">{{ 'app.sign_in'|trans }}</a>
+                                <a href="{{ path('app_register') }}" class="btn btn-info">{{ 'app.sign_up'|trans }}</a>
                             </div>
                         {% endif %}
 
@@ -74,7 +89,7 @@
                 <div class="col-md-4">
 
                     {% block sidebar %}
-                        <div class="sticky-top sticky-sidebar">
+                        <div class="">
 
 {#                            {{ render(controller('App\\Controller\\SecurityController::login')) }}#}
 

@@ -107,3 +107,18 @@ body {
 .bd-callout-danger {
   border-left-color: $danger;
 }
+
+.navbar{
+  .navbar-collapse{
+    .dropdown{
+      cursor: pointer;
+    }
+  }
+
+}
+
+.cke{
+  .cke_reset{
+    min-height: 800px;
+  }
+}

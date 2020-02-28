@@ -24,17 +24,15 @@ security:
             guard:
                 authenticators:
                     - lexik_jwt_authentication.jwt_token_authenticator
-
-        main:
-            anonymous: true
-
             json_login:
-                check_path: /authentication_token
+                check_path: /api/authentication
                 username_path: email
                 password_path: password
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
 
+        main:
+            anonymous: true
             guard:
                 authenticators:
                     - App\Security\LoginFormAuthenticator

@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Class UserController
@@ -74,11 +75,13 @@ class UserController extends AbstractController
 	/**
 	 * @Route("/add-to-bookmark/{slug}", name="user_add_to_bookmark", methods={"GET"})
 	 * @IsGranted("ROLE_USER")
-	 * @param Post $post
+	 * @param Post                $post
+	 *
+	 * @param TranslatorInterface $translator
 	 *
 	 * @return RedirectResponse
 	 */
-	public function addToBookmark(Post $post): RedirectResponse
+	public function addToBookmark(Post $post, TranslatorInterface $translator): RedirectResponse
 	{
 		$user = $this->getUser();
 
@@ -92,7 +95,7 @@ class UserController extends AbstractController
 		$entityManager->persist($user);
 		$entityManager->flush();
 
-		$this->addFlash('success', sprintf('Post <b>%s</b> added to bookmark!', $post->getTitle()));
+		$this->addFlash('success', sprintf($translator->trans('post.bookmarks.messages.add'), $post->getTitle()));
 
 		return $this->redirectToRoute('blog_index');
 
@@ -100,11 +103,13 @@ class UserController extends AbstractController
 
 	/**
 	 * @Route("/remove-from-bookrmaks/{slug}", name="user_remove_from_bookmarks", methods={"GET"})
-	 * @param Post $post
+	 * @param Post                $post
+	 *
+	 * @param TranslatorInterface $translator
 	 *
 	 * @return RedirectResponse
 	 */
-	public function removeFromBookmarks(Post $post): RedirectResponse
+	public function removeFromBookmarks(Post $post, TranslatorInterface $translator): RedirectResponse
 	{
 		$user = $this->getUser();
 
@@ -118,7 +123,7 @@ class UserController extends AbstractController
 		$entityManager->persist($user);
 		$entityManager->flush();
 
-		$this->addFlash('success', sprintf('Post <b>%s</b> removed from bookmarks!', $post->getTitle()));
+		$this->addFlash('success', sprintf($translator->trans('post.bookmarks.messages.delete'), $post->getTitle()));
 
 		return $this->redirectToRoute('blog_index');
 	}

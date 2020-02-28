@@ -47,7 +47,7 @@ class UserFixtures extends Fixture implements OrderedFixtureInterface
 					->setNickname('admin')
 					->setPassword($this->passwordEncoder->encodePassword($user, 'admin'))
 					->setRoles([User::ROLE_ADMIN, User::ROLE_USER_CONFIRMED])
-					->setApiToken('admin');
+				;
 			}
 			else
 			{
@@ -56,7 +56,6 @@ class UserFixtures extends Fixture implements OrderedFixtureInterface
 					->setNickname($faker->userName)
 					->setPassword($this->passwordEncoder->encodePassword($user, 'blog'))
 					->setRoles([User::ROLE_USER_CONFIRMED])
-					->setApiToken($this->tokenGenerator->generateToken())
 				;
 			}
 
