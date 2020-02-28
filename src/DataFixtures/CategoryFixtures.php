@@ -3,11 +3,11 @@
 namespace App\DataFixtures;
 
 use App\Entity\Category;
+use App\Services\FactoryLocales;
 use App\Twig\BootstrapColorExtension;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-use Faker\Factory;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
 class CategoryFixtures extends Fixture implements OrderedFixtureInterface
@@ -19,14 +19,18 @@ class CategoryFixtures extends Fixture implements OrderedFixtureInterface
 	 */
 	private $slugger;
 
+	private $factory;
+
 	/**
 	 * PostFixtures constructor.
 	 *
 	 * @param SluggerInterface $slugger
+	 * @param FactoryLocales   $factoryLocales
 	 */
-	public function __construct(SluggerInterface $slugger)
+	public function __construct(SluggerInterface $slugger, FactoryLocales $factoryLocales)
 	{
 		$this->slugger = $slugger;
+		$this->factory = $factoryLocales->gatFactory();
 	}
 
 	/**
@@ -36,26 +40,29 @@ class CategoryFixtures extends Fixture implements OrderedFixtureInterface
 	 */
 	public function load(ObjectManager $manager): void
 	{
-		$faker = Factory::create();
-
-		for ($i = 0; $i < self::COUNT; $i++)
+		foreach ($this->factory as $item)
 		{
-			$title = $faker->country;
-			$time  = $faker->unixTime;
+			for ($i = 0; $i < self::COUNT; $i++)
+			{
+				$title = $item['faker']->country;
+				$time  = $item['faker']->unixTime;
 
-			$category = (new Category())
-				->setTitle($title)
-				->setSlug($this->slugger->slug($title))
-				->setColor(random_int(0, count(BootstrapColorExtension::COLORS_CLASS) - 1))
-				->setCreatedAt($time)
-				->setUpdatedAt($time);
+				$category = (new Category())
+					->setTitle($title)
+					->setSlug($this->slugger->slug($title))
+					->setColor(random_int(0, count(BootstrapColorExtension::COLORS_CLASS) - 1))
+					->setCreatedAt($time)
+					->setUpdatedAt($time);
 
-			$this->addReference('category_' . $i, $category);
+				$this->addReference('category_' . $i . '_' . $item['locale'], $category);
 
-			$manager->persist($category);
+				$manager->persist($category);
+			}
+
 		}
 
 		$manager->flush();
+
 	}
 
 	/**

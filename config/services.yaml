@@ -17,6 +17,8 @@ services:
         bind:
             $locales: '%app_locales%'
             $defaultLocale: '%locale%'
+            $fakerLocales: ['en_US','ru_RU']
+            $postImagesDirectory: '%post_images_directory%'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name

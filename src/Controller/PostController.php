@@ -11,6 +11,7 @@ use App\Services\FileUploader;
 use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -34,8 +35,6 @@ class PostController extends AbstractController
 	 */
 	public function index(Request $request, PostRepository $postRepository, PaginatorInterface $paginator): Response
 	{
-		$locale = $request->getLocale();
-
 		$pagination = $paginator->paginate(
 			$postRepository->paginationQuery(),
 			$request->query->getInt('page', 1),

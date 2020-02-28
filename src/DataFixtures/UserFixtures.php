@@ -3,13 +3,12 @@
 namespace App\DataFixtures;
 
 use App\Entity\User;
+use App\Services\FactoryLocales;
 use App\Twig\BootstrapColorExtension;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-use Faker\Factory;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Symfony\Component\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
 
 class UserFixtures extends Fixture implements OrderedFixtureInterface
 {
@@ -17,12 +16,18 @@ class UserFixtures extends Fixture implements OrderedFixtureInterface
 
 	private $passwordEncoder;
 
-	private $tokenGenerator;
+	private $factory;
 
-	public function __construct(UserPasswordEncoderInterface $passwordEncoder, TokenGeneratorInterface $tokenGenerator)
+	/**
+	 * UserFixtures constructor.
+	 *
+	 * @param UserPasswordEncoderInterface $passwordEncoder
+	 * @param FactoryLocales               $factoryLocales
+	 */
+	public function __construct(UserPasswordEncoderInterface $passwordEncoder, FactoryLocales $factoryLocales)
 	{
 		$this->passwordEncoder = $passwordEncoder;
-		$this->tokenGenerator  = $tokenGenerator;
+		$this->factory         = $factoryLocales->gatFactory();
 	}
 
 	/**
@@ -32,44 +37,42 @@ class UserFixtures extends Fixture implements OrderedFixtureInterface
 	 */
 	public function load(ObjectManager $manager): void
 	{
-		$faker = Factory::create();
-
-		for ($i = 0; $i < self::COUNT; $i++)
+		foreach ($this->factory as $k => $item)
 		{
-			$time = $faker->unixTime;
-
-			$user = new User();
-
-			if ($i === 0)
+			for ($i = 0; $i < self::COUNT; $i++)
 			{
+				$time = $item['faker']->unixTime;
+
+				$user = new User();
+
+				if ($k === 0 && $i === 0)
+				{
+					$user
+						->setEmail('admin@blog.com')
+						->setNickname('admin')
+						->setPassword($this->passwordEncoder->encodePassword($user, 'admin'))
+						->setRoles([User::ROLE_ADMIN, User::ROLE_USER_CONFIRMED]);
+				}
+				else
+				{
+					$user
+						->setEmail($item['faker']->email)
+						->setNickname($item['faker']->userName)
+						->setPassword($this->passwordEncoder->encodePassword($user, 'blog'))
+						->setRoles([User::ROLE_USER_CONFIRMED]);
+				}
+
 				$user
-					->setEmail('admin@blog.com')
-					->setNickname('admin')
-					->setPassword($this->passwordEncoder->encodePassword($user, 'admin'))
-					->setRoles([User::ROLE_ADMIN, User::ROLE_USER_CONFIRMED])
-				;
+					->setColor(random_int(0, count(BootstrapColorExtension::COLORS_CLASS) - 1))
+					->setActive(true)
+					->setCreatedAt($time)
+					->setUpdatedAt($time);
+
+				$this->addReference('user_' . $i . '_' . $item['locale'], $user);
+
+				$manager->persist($user);
 			}
-			else
-			{
-				$user
-					->setEmail($faker->email)
-					->setNickname($faker->userName)
-					->setPassword($this->passwordEncoder->encodePassword($user, 'blog'))
-					->setRoles([User::ROLE_USER_CONFIRMED])
-				;
-			}
-
-			$user
-				->setColor(random_int(0, count(BootstrapColorExtension::COLORS_CLASS) - 1))
-				->setActive(true)
-				->setCreatedAt($time)
-				->setUpdatedAt($time);
-
-			$this->addReference('user_' . $i, $user);
-
-			$manager->persist($user);
 		}
-
 
 		$manager->flush();
 	}
