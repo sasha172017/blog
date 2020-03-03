@@ -5,3 +5,8 @@
 {% block main %}
     {{ include('post/_form.html.twig', {'header': 'Edit ' ~ post.title}) }}
 {% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('bs-custom-file-input') }}
+{% endblock %}

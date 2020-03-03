@@ -8,10 +8,11 @@ use App\Form\PostType;
 use App\Repository\PostRepository;
 use App\Security\Voter\PostVoter;
 use App\Services\FileUploader;
+use App\Services\TopPosts;
+use App\Services\UrlRemember;
 use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,34 +20,15 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-
+/**
+ * @Route("/post")
+ * Class PostController
+ * @package App\Controller
+ */
 class PostController extends AbstractController
 {
-	public const LIMIT_PER_PAGE = 5;
-
 	/**
-	 * @Route("/", name="blog_index")
-	 * @param Request            $request
-	 * @param PostRepository     $postRepository
-	 *
-	 * @param PaginatorInterface $paginator
-	 *
-	 * @return Response
-	 */
-	public function index(Request $request, PostRepository $postRepository, PaginatorInterface $paginator): Response
-	{
-		$pagination = $paginator->paginate(
-			$postRepository->paginationQuery(),
-			$request->query->getInt('page', 1),
-			self::LIMIT_PER_PAGE
-		);
-
-		return $this->render('post/index.html.twig', ['pagination' => $pagination]);
-
-	}
-
-	/**
-	 * @Route("/post/new", name="post_new", methods={"GET","POST"})
+	 * @Route("/new", name="post_new", methods={"GET","POST"})
 	 * @IsGranted("ROLE_USER_CONFIRMED")
 	 * @param Request          $request
 	 *
@@ -94,8 +76,8 @@ class PostController extends AbstractController
 	}
 
 	/**
-	 * @Route("/post/{slug}", name="post_show", methods={"GET"})
-	 * @param Post $post
+	 * @Route("/{slug}/show", name="post_show", methods={"GET"})
+	 * @param Post        $post
 	 *
 	 * @return Response
 	 */
@@ -110,14 +92,12 @@ class PostController extends AbstractController
 	}
 
 	/**
-	 * @Route("/post/{slug}/edit", name="post_edit", methods={"GET","POST"})
+	 * @Route("/{slug}/edit", name="post_edit", methods={"GET","POST"})
 	 * @IsGranted("ROLE_USER")
 	 * @param Request             $request
 	 * @param Post                $post
 	 * @param SluggerInterface    $slugger
-	 *
 	 * @param FileUploader        $fileUploader
-	 *
 	 * @param TranslatorInterface $translator
 	 *
 	 * @return Response
@@ -144,7 +124,9 @@ class PostController extends AbstractController
 
 			$this->getDoctrine()->getManager()->flush();
 
-			return $this->redirectToRoute('blog_index');
+			$this->addFlash('success', sprintf($translator->trans('post.messages.success.edit'), $post->getTitle()));
+
+			return $this->redirectToRoute('post_show', ['slug' => $post->getSlug()]);
 		}
 
 		return $this->render('post/edit.html.twig', [
@@ -154,7 +136,7 @@ class PostController extends AbstractController
 	}
 
 	/**
-	 * @Route("/post/{id}", name="post_delete", methods={"DELETE"})
+	 * @Route("/{id}", name="post_delete", methods={"DELETE"})
 	 * @IsGranted("ROLE_USER")
 	 * @param Request             $request
 	 * @param Post                $post
@@ -196,7 +178,7 @@ class PostController extends AbstractController
 	}
 
 	/**
-	 * @Route("/post/{slug}/rating-up", name="post_rating_up", methods={"GET", "POST"})
+	 * @Route("/{slug}/rating-up", name="post_rating_up", methods={"GET", "POST"})
 	 * @IsGranted("ROLE_USER")
 	 * @param Post                $post
 	 *
@@ -215,7 +197,7 @@ class PostController extends AbstractController
 	}
 
 	/**
-	 * @Route("/post/{slug}/rating-down", name="post_rating_down", methods={"GET", "POST"})
+	 * @Route("/{slug}/rating-down", name="post_rating_down", methods={"GET", "POST"})
 	 * @IsGranted("ROLE_USER")
 	 * @param Post                $post
 	 *
@@ -231,6 +213,25 @@ class PostController extends AbstractController
 		$this->addFlash('success', $translator->trans('post.messages.rating'));
 
 		return $this->redirectToRoute('post_show', ['slug' => $post->getSlug()]);
+	}
+
+	/**
+	 * @Route("/top", name="post_top", methods={"GET"})
+	 * @param Request            $request
+	 * @param PostRepository     $postRepository
+	 * @param PaginatorInterface $paginator
+	 * @param int                $postLimitPerPage
+	 * @return Response
+	 */
+	public function top(Request $request, PostRepository $postRepository, PaginatorInterface $paginator, int $postLimitPerPage): Response
+	{
+		$pagination = $paginator->paginate(
+			$postRepository->top(),
+			$request->query->getInt('page', 1),
+			$postLimitPerPage
+		);
+
+		return $this->render($request->isXmlHttpRequest() ? 'post/_items.html.twig' : 'post/index.html.twig', ['pagination' => $pagination]);
 	}
 
 }

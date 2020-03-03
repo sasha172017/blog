@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <title>{% block title %}{{'app.title'|trans}}!{% endblock %}</title>
+    <title>{% block title %}{{ 'app.title'|trans }}!{% endblock %}</title>
     {% block stylesheets %}
         {{ encore_entry_link_tags('app') }}
     {% endblock %}
@@ -58,7 +58,8 @@
                         </ul>
 
                         {% if app.user %}
-                            <a href="{{ path('app_logout') }}" class="btn btn-outline-secondary btn-sm">({{ app.user.nickname }}) {{ 'app.sign_out'|trans }}</a>
+                            <a href="{{ path('app_logout') }}" class="btn btn-outline-secondary btn-sm">({{ app.user.nickname }}
+                                ) {{ 'app.sign_out'|trans }}</a>
                         {% else %}
                             <div class="btn-group btn-group-sm" role="group">
                                 <a href="{{ path('app_login') }}" class="btn btn-outline-info">{{ 'app.sign_in'|trans }}</a>
@@ -91,7 +92,7 @@
                     {% block sidebar %}
                         <div class="">
 
-{#                            {{ render(controller('App\\Controller\\SecurityController::login')) }}#}
+                            {#                            {{ render(controller('App\\Controller\\SecurityController::login')) }}#}
 
                             {{ include('default/user-block.html.twig') }}
 
@@ -106,11 +107,12 @@
 
 
         {% block footer %}
-            {#        <footer class="py-3 bg-dark ">#}
-            {#            <div class="container">#}
-            {#                <p class="m-0 text-center text-white">Blog 2020</p>#}
-            {#            </div>#}
-            {#        </footer>#}
+{#            <footer class="py-3 bg-dark ">#}
+{#                <div class="container">#}
+{#                    <p class="m-0 text-center text-white">Blog 2020</p>#}
+{#                </div>#}
+{#            </footer>#}
+
         {% endblock %}
     </div>
 {% endblock %}

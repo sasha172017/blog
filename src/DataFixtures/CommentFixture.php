@@ -8,7 +8,6 @@ use App\Services\FactoryLocales;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
-use Faker\Factory;
 
 class CommentFixture extends Fixture implements OrderedFixtureInterface
 {

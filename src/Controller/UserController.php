@@ -7,6 +7,7 @@ use App\Entity\User;
 use App\Repository\PostRepository;
 use App\Repository\UserRepository;
 use App\Security\Voter\BookmarksVoter;
+use App\Services\UrlRemember;
 use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -25,21 +26,31 @@ class UserController extends AbstractController
 {
 	/**
 	 * @Route("/{nickname}/posts", name="user_posts", methods={"GET"})
+	 * @param UrlRemember        $urlRemember
 	 * @param User               $user
 	 *
 	 * @param Request            $request
 	 * @param PostRepository     $postRepository
 	 * @param PaginatorInterface $paginator
 	 *
+	 * @param int                $postLimitPerPage
+	 *
 	 * @return Response
 	 */
-	public function posts(User $user, Request $request, PostRepository $postRepository, PaginatorInterface $paginator): Response
+	public function posts(UrlRemember $urlRemember, User $user, Request $request, PostRepository $postRepository, PaginatorInterface $paginator, int $postLimitPerPage): Response
 	{
+		$urlRemember->remember();
+
 		$pagination = $paginator->paginate(
 			$postRepository->userPosts($user->getId()),
 			$request->query->getInt('page', 1),
-			PostController::LIMIT_PER_PAGE
+			$postLimitPerPage
 		);
+
+		if ($request->isXmlHttpRequest())
+		{
+			return $this->render('post/_items.html.twig', ['pagination' => $pagination]);
+		}
 
 		return $this->render('user/posts.html.twig', [
 			'pagination' => $pagination,
@@ -49,22 +60,32 @@ class UserController extends AbstractController
 
 	/**
 	 * @Route("/{nickname}/bookmarks", name="user_bookmarks", methods={"GET"})
+	 * @param UrlRemember        $urlRemember
 	 * @param User               $user
 	 * @param Request            $request
 	 * @param PostRepository     $postRepository
 	 * @param PaginatorInterface $paginator
 	 *
+	 * @param int                $postLimitPerPage
+	 *
 	 * @return Response
 	 */
-	public function bookmarks(User $user, Request $request, PostRepository $postRepository, PaginatorInterface $paginator): Response
+	public function bookmarks(UrlRemember $urlRemember, User $user, Request $request, PostRepository $postRepository, PaginatorInterface $paginator, int $postLimitPerPage): Response
 	{
 		$this->denyAccessUnlessGranted(BookmarksVoter::SHOW, $user, 'Authors can only see bookmarks!');
+
+		$urlRemember->remember();
 
 		$pagination = $paginator->paginate(
 			$postRepository->userBookmarks($user->getId()),
 			$request->query->getInt('page', 1),
-			PostController::LIMIT_PER_PAGE
+			$postLimitPerPage
 		);
+
+		if ($request->isXmlHttpRequest())
+		{
+			return $this->render('post/_items.html.twig', ['pagination' => $pagination]);
+		}
 
 		return $this->render('user/bookmarks.html.twig', [
 			'pagination' => $pagination,
@@ -73,15 +94,15 @@ class UserController extends AbstractController
 	}
 
 	/**
-	 * @Route("/add-to-bookmark/{slug}", name="user_add_to_bookmark", methods={"GET"})
+	 * @Route("/add-to-bookmarks/{slug}", name="user_add_to_bookmarks", methods={"GET"})
 	 * @IsGranted("ROLE_USER")
+	 * @param UrlRemember         $urlRemember
 	 * @param Post                $post
-	 *
 	 * @param TranslatorInterface $translator
 	 *
 	 * @return RedirectResponse
 	 */
-	public function addToBookmark(Post $post, TranslatorInterface $translator): RedirectResponse
+	public function addToBookmarks(UrlRemember $urlRemember, Post $post, TranslatorInterface $translator): RedirectResponse
 	{
 		$user = $this->getUser();
 
@@ -97,19 +118,18 @@ class UserController extends AbstractController
 
 		$this->addFlash('success', sprintf($translator->trans('post.bookmarks.messages.add'), $post->getTitle()));
 
-		return $this->redirectToRoute('blog_index');
-
+		return $this->redirect($urlRemember->previous());
 	}
 
 	/**
 	 * @Route("/remove-from-bookrmaks/{slug}", name="user_remove_from_bookmarks", methods={"GET"})
-	 * @param Post                $post
-	 *
+	 * @param UrlRemember         $urlRemember
+	 * @param Post                $post	 *
 	 * @param TranslatorInterface $translator
 	 *
 	 * @return RedirectResponse
 	 */
-	public function removeFromBookmarks(Post $post, TranslatorInterface $translator): RedirectResponse
+	public function removeFromBookmarks(UrlRemember $urlRemember, Post $post, TranslatorInterface $translator): RedirectResponse
 	{
 		$user = $this->getUser();
 
@@ -125,7 +145,7 @@ class UserController extends AbstractController
 
 		$this->addFlash('success', sprintf($translator->trans('post.bookmarks.messages.delete'), $post->getTitle()));
 
-		return $this->redirectToRoute('blog_index');
+		return $this->redirect($urlRemember->previous());
 	}
 
 }

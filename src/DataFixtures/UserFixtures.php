@@ -65,6 +65,7 @@ class UserFixtures extends Fixture implements OrderedFixtureInterface
 				$user
 					->setColor(random_int(0, count(BootstrapColorExtension::COLORS_CLASS) - 1))
 					->setActive(true)
+					->setLocale(strstr($item['locale'],'_',true))
 					->setCreatedAt($time)
 					->setUpdatedAt($time);
 

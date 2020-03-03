@@ -8,7 +8,7 @@ authentication_token:
 
 blog_index:
   path:       /{_locale}
-  controller: App\Controller\PostController::index
+  controller: App\Controller\BlogController::index
   requirements:
     _locale: '%app_locales%'
   defaults:

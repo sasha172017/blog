@@ -50,16 +50,23 @@ class PostFixtures extends Fixture implements OrderedFixtureInterface
 				$title = $item['faker']->realText(50);
 				$time  = $item['faker']->unixTime;
 
+				$ratingUp = random_int(0, 100);
+				$ratingDown = random_int(0, 50);
+
+				$total = $ratingUp + $ratingDown;
+				$rating = $ratingUp - $ratingDown;
+
 				$post = (new Post())
 					->setTitle($title)
 					->setSlug($this->slugger->slug($title))
 					->setSummary($item['faker']->text)
 					->setContent($item['faker']->paragraph(random_int(5, 50)))
-					->setViews(random_int(0, 50))
+					->setViews(random_int($total, $total + 100))
 					->setAuthor($user)
 					->addCategory($category)
-					->setRatingUp(random_int(0, 1000))
-					->setRatingDown(random_int(0, 500))
+					->setRatingUp($ratingUp)
+					->setRatingDown($ratingDown)
+					->setRating($rating)
 					->setCreatedAt($time)
 					->setUpdatedAt($time);
 

@@ -68,6 +68,7 @@ post:
     success:
       added: 'Post <b>%s</b> added!'
       deleted: 'Post <b>%s</b> deleted!'
+      edit: 'Post <b>%s</b> edited!'
 
   author: 'Author'
   confirm:
@@ -79,6 +80,8 @@ post:
     summary: 'Summary'
     image: 'Image'
     content: 'Content'
+
+  empty_items: 'No records found!'
 
 category:
   title: 'Categories'

@@ -27,7 +27,7 @@ class PostRepository extends ServiceEntityRepository
 	 */
 	private function paginationSort(QueryBuilder $query): QueryBuilder
 	{
-		return $query->orderBy('p.updatedAt', 'DESC');
+		return $query->addOrderBy('p.updatedAt', 'DESC');
 	}
 
 	/**
@@ -38,6 +38,20 @@ class PostRepository extends ServiceEntityRepository
 		$query = $this->createQueryBuilder('p');
 
 		return $this->paginationSort($query);
+	}
+
+	public function paginationSortComments(string $sort)
+	{
+		$query = $this->createQueryBuilder('p')
+			->addSelect('p', 'c', 'COUNT(c) as hidden countComments')
+			->leftJoin('p.comments', 'c')
+			->groupBy('p')
+			->orderBy('countComments', $sort);
+
+
+		return $query->getQuery()->getResult();
+
+
 	}
 
 	/**
@@ -83,10 +97,23 @@ class PostRepository extends ServiceEntityRepository
 			->addSelect('p', 'u')
 			->leftJoin('p.users', 'u')
 			->where('u.id = :userId')
-			->setParameter('userId', $userId)
-		;
+			->setParameter('userId', $userId);
 
 		return $this->paginationSort($query);
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public function top()
+	{
+		return $this->createQueryBuilder('p')
+			->addSelect('p.rating + p.views as HIDDEN rating')
+			->having('rating > 0')
+			->orderBy('rating', 'DESC')
+			->addOrderBy('p.views', 'DESC')
+			->getQuery()
+			->getResult();
 	}
 
 }

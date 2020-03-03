@@ -5,9 +5,9 @@ namespace App\Controller;
 use App\Entity\Category;
 use App\Repository\CategoryRepository;
 use App\Repository\PostRepository;
+use App\Services\UrlRemember;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -39,16 +39,25 @@ class CategoryController extends AbstractController
 	 * @param Request            $request
 	 * @param PostRepository     $postRepository
 	 * @param PaginatorInterface $paginator
+	 * @param int                $postLimitPerPage
+	 * @param UrlRemember        $urlRemember
 	 *
 	 * @return Response
 	 */
-	public function posts(Category $category, Request $request, PostRepository $postRepository, PaginatorInterface $paginator): Response
+	public function posts(Category $category, Request $request, PostRepository $postRepository, PaginatorInterface $paginator, int $postLimitPerPage, UrlRemember $urlRemember): Response
 	{
+		$urlRemember->remember();
+
 		$pagination = $paginator->paginate(
 			$postRepository->categoryPosts($category->getId()),
 			$request->query->getInt('page', 1),
-			PostController::LIMIT_PER_PAGE
+			$postLimitPerPage
 		);
+
+		if ($request->isXmlHttpRequest())
+		{
+			return $this->render('post/_items.html.twig', ['pagination' => $pagination]);
+		}
 
 		return $this->render('category/posts.html.twig', [
 			'pagination' => $pagination,

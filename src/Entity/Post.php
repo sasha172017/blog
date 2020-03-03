@@ -81,6 +81,11 @@ class Post
 	private $ratingDown;
 
 	/**
+	 * @ORM\Column(type="integer", options={"default":0})
+	 */
+	private $rating;
+
+	/**
 	 * @ORM\ManyToMany(targetEntity="App\Entity\User", mappedBy="bookmarks")
 	 */
 	private $users;
@@ -295,6 +300,23 @@ class Post
 		}
 
 		return $this;
+	}
+
+	public function getRating(): ?int
+	{
+		return $this->rating;
+	}
+
+	public function setRating(int $rating = 0): self
+	{
+		$this->rating = $rating;
+
+		return $this;
+	}
+
+	public function onPreFlush(): void
+	{
+		$this->setRating($this->getRatingUp() - $this->getRatingDown());
 	}
 
 }

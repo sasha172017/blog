@@ -2,9 +2,7 @@
 
 namespace App\Twig;
 
-use Symfony\Bundle\TwigBundle\DependencyInjection\TwigExtension;
 use Symfony\Component\Intl\Locales;
-use Twig\Environment;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
