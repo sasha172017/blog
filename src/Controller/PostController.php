@@ -5,12 +5,8 @@ namespace App\Controller;
 use App\Entity\Post;
 use App\Form\CommentType;
 use App\Form\PostType;
-use App\Repository\PostRepository;
 use App\Security\Voter\PostVoter;
 use App\Services\FileUploader;
-use App\Services\TopPosts;
-use App\Services\UrlRemember;
-use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -213,25 +209,6 @@ class PostController extends AbstractController
 		$this->addFlash('success', $translator->trans('post.messages.rating'));
 
 		return $this->redirectToRoute('post_show', ['slug' => $post->getSlug()]);
-	}
-
-	/**
-	 * @Route("/top", name="post_top", methods={"GET"})
-	 * @param Request            $request
-	 * @param PostRepository     $postRepository
-	 * @param PaginatorInterface $paginator
-	 * @param int                $postLimitPerPage
-	 * @return Response
-	 */
-	public function top(Request $request, PostRepository $postRepository, PaginatorInterface $paginator, int $postLimitPerPage): Response
-	{
-		$pagination = $paginator->paginate(
-			$postRepository->top(),
-			$request->query->getInt('page', 1),
-			$postLimitPerPage
-		);
-
-		return $this->render($request->isXmlHttpRequest() ? 'post/_items.html.twig' : 'post/index.html.twig', ['pagination' => $pagination]);
 	}
 
 }

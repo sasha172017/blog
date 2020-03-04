@@ -5,8 +5,9 @@ namespace App\Controller;
 use App\Entity\Post;
 use App\Entity\User;
 use App\Repository\PostRepository;
-use App\Repository\UserRepository;
 use App\Security\Voter\BookmarksVoter;
+use App\Services\PostPagination;
+use App\Services\PostPaginationSortQuery;
 use App\Services\UrlRemember;
 use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -26,69 +27,56 @@ class UserController extends AbstractController
 {
 	/**
 	 * @Route("/{nickname}/posts", name="user_posts", methods={"GET"})
-	 * @param UrlRemember        $urlRemember
-	 * @param User               $user
-	 *
-	 * @param Request            $request
-	 * @param PostRepository     $postRepository
-	 * @param PaginatorInterface $paginator
-	 *
-	 * @param int                $postLimitPerPage
+	 * @param Request                 $request
+	 * @param UrlRemember             $urlRemember
+	 * @param User                    $user	 *
+	 * @param PostPagination          $pagination
+	 * @param PostPaginationSortQuery $paginationSortQuery
 	 *
 	 * @return Response
 	 */
-	public function posts(UrlRemember $urlRemember, User $user, Request $request, PostRepository $postRepository, PaginatorInterface $paginator, int $postLimitPerPage): Response
+	public function posts(Request $request, UrlRemember $urlRemember, User $user, PostPagination $pagination, PostPaginationSortQuery $paginationSortQuery): Response
 	{
 		$urlRemember->remember();
 
-		$pagination = $paginator->paginate(
-			$postRepository->userPosts($user->getId()),
-			$request->query->getInt('page', 1),
-			$postLimitPerPage
-		);
+		$paginator = $pagination->pagination($paginationSortQuery->user($user->getId()));
 
 		if ($request->isXmlHttpRequest())
 		{
-			return $this->render('post/_items.html.twig', ['pagination' => $pagination]);
+			return $this->render('post/_items.html.twig', ['pagination' => $paginator]);
 		}
 
 		return $this->render('user/posts.html.twig', [
-			'pagination' => $pagination,
+			'pagination' => $paginator,
 			'user'       => $user
 		]);
 	}
 
 	/**
 	 * @Route("/{nickname}/bookmarks", name="user_bookmarks", methods={"GET"})
-	 * @param UrlRemember        $urlRemember
-	 * @param User               $user
-	 * @param Request            $request
-	 * @param PostRepository     $postRepository
-	 * @param PaginatorInterface $paginator
-	 *
-	 * @param int                $postLimitPerPage
+	 * @param UrlRemember             $urlRemember
+	 * @param User                    $user
+	 * @param Request                 $request
+	 * @param PostPagination          $pagination
+	 * @param PostPaginationSortQuery $paginationSortQuery
 	 *
 	 * @return Response
 	 */
-	public function bookmarks(UrlRemember $urlRemember, User $user, Request $request, PostRepository $postRepository, PaginatorInterface $paginator, int $postLimitPerPage): Response
+	public function bookmarks(UrlRemember $urlRemember, User $user, Request $request, PostPagination $pagination, PostPaginationSortQuery $paginationSortQuery): Response
 	{
 		$this->denyAccessUnlessGranted(BookmarksVoter::SHOW, $user, 'Authors can only see bookmarks!');
 
 		$urlRemember->remember();
 
-		$pagination = $paginator->paginate(
-			$postRepository->userBookmarks($user->getId()),
-			$request->query->getInt('page', 1),
-			$postLimitPerPage
-		);
+		$paginator = $pagination->pagination($paginationSortQuery->userBookmarks($user->getId()));
 
 		if ($request->isXmlHttpRequest())
 		{
-			return $this->render('post/_items.html.twig', ['pagination' => $pagination]);
+			return $this->render('post/_items.html.twig', ['pagination' => $paginator]);
 		}
 
 		return $this->render('user/bookmarks.html.twig', [
-			'pagination' => $pagination,
+			'pagination' => $paginator,
 			'user'       => $user,
 		]);
 	}

@@ -25,7 +25,7 @@ class PostRepository extends ServiceEntityRepository
 	 *
 	 * @return QueryBuilder
 	 */
-	private function paginationSort(QueryBuilder $query): QueryBuilder
+	private function paginationDefaultSort(QueryBuilder $query): QueryBuilder
 	{
 		return $query->addOrderBy('p.updatedAt', 'DESC');
 	}
@@ -37,29 +37,56 @@ class PostRepository extends ServiceEntityRepository
 	{
 		$query = $this->createQueryBuilder('p');
 
-		return $this->paginationSort($query);
-	}
-
-	public function paginationSortComments(string $sort)
-	{
-		$query = $this->createQueryBuilder('p')
-			->addSelect('p', 'c', 'COUNT(c) as hidden countComments')
-			->leftJoin('p.comments', 'c')
-			->groupBy('p')
-			->orderBy('countComments', $sort);
-
-
-		return $query->getQuery()->getResult();
-
-
+		return $this->paginationDefaultSort($query);
 	}
 
 	/**
-	 * @param int $categoryId
+	 * @param QueryBuilder $query
 	 *
 	 * @return QueryBuilder
 	 */
-	public function categoryPosts(int $categoryId): QueryBuilder
+	private function queryTop(QueryBuilder $query): QueryBuilder
+	{
+		return $query->addSelect('p.rating + p.views as HIDDEN top')
+			->having('top > 0');
+	}
+
+	/**
+	 * @param QueryBuilder $query
+	 *
+	 * @return QueryBuilder
+	 */
+	private function queryCountComments(QueryBuilder $query): QueryBuilder
+	{
+		return $query->addSelect('COUNT(comments) as hidden countComments')
+			->leftJoin('p.comments', 'comments')
+			->groupBy('p.id');
+	}
+
+	/**
+	 * @return QueryBuilder
+	 */
+	public function top(): QueryBuilder
+	{
+		return $this->queryTop($this->createQueryBuilder('p'));
+	}
+
+	/**
+	 * @return QueryBuilder
+	 */
+	public function countComments(): QueryBuilder
+	{
+		return $this->queryCountComments($this->createQueryBuilder('p'));
+	}
+
+	/**
+	 * @param int  $categoryId
+	 *
+	 * @param bool $defSort
+	 *
+	 * @return QueryBuilder
+	 */
+	public function categoryPosts(int $categoryId, bool $defSort = true): QueryBuilder
 	{
 		$query = $this->createQueryBuilder('p')
 			->addSelect('p', 'c')
@@ -67,23 +94,45 @@ class PostRepository extends ServiceEntityRepository
 			->where('c.id = :categoryId')
 			->setParameter('categoryId', $categoryId);
 
-		return $this->paginationSort($query);
+		return $defSort ? $this->paginationDefaultSort($query) : $query;
 	}
 
 	/**
-	 * @param int $authorId
+	 * @param int $categoryId
 	 *
 	 * @return QueryBuilder
 	 */
-	public function userPosts(int $authorId): QueryBuilder
+	public function categoryPostsTop(int $categoryId): QueryBuilder
+	{
+		return $this->queryTop($this->categoryPosts($categoryId, false));
+	}
+
+	/**
+	 * @param int $categoryId
+	 *
+	 * @return QueryBuilder
+	 */
+	public function categoryPostsCountComments(int $categoryId): QueryBuilder
+	{
+		return $this->queryCountComments($this->categoryPosts($categoryId, false));
+	}
+
+	/**
+	 * @param int  $userId
+	 *
+	 * @param bool $defSort
+	 *
+	 * @return QueryBuilder
+	 */
+	public function userPosts(int $userId, bool $defSort = true): QueryBuilder
 	{
 		$query = $this->createQueryBuilder('p')
 			->addSelect('p', 'a')
 			->leftJoin('p.author', 'a')
-			->where('a.id = :authorId')
-			->setParameter('authorId', $authorId);
+			->where('a.id = :userId')
+			->setParameter('userId', $userId);
 
-		return $this->paginationSort($query);
+		return $defSort ? $this->paginationDefaultSort($query) : $query;
 	}
 
 	/**
@@ -91,7 +140,29 @@ class PostRepository extends ServiceEntityRepository
 	 *
 	 * @return QueryBuilder
 	 */
-	public function userBookmarks(int $userId): QueryBuilder
+	public function userPostsTop(int $userId): QueryBuilder
+	{
+		return $this->queryTop($this->userPosts($userId, false));
+	}
+
+	/**
+	 * @param int $userId
+	 *
+	 * @return QueryBuilder
+	 */
+	public function userPostsCountComments(int $userId): QueryBuilder
+	{
+		return $this->queryCountComments($this->userPosts($userId, false));
+	}
+
+	/**
+	 * @param int  $userId
+	 *
+	 * @param bool $defSort
+	 *
+	 * @return QueryBuilder
+	 */
+	public function userBookmarks(int $userId, bool $defSort = true): QueryBuilder
 	{
 		$query = $this->createQueryBuilder('p')
 			->addSelect('p', 'u')
@@ -99,21 +170,27 @@ class PostRepository extends ServiceEntityRepository
 			->where('u.id = :userId')
 			->setParameter('userId', $userId);
 
-		return $this->paginationSort($query);
+		return $defSort ? $this->paginationDefaultSort($query) : $query;
 	}
 
 	/**
-	 * @return mixed
+	 * @param int $userId
+	 *
+	 * @return QueryBuilder
 	 */
-	public function top()
+	public function userBookmarksPostsTop(int $userId): QueryBuilder
 	{
-		return $this->createQueryBuilder('p')
-			->addSelect('p.rating + p.views as HIDDEN rating')
-			->having('rating > 0')
-			->orderBy('rating', 'DESC')
-			->addOrderBy('p.views', 'DESC')
-			->getQuery()
-			->getResult();
+		return $this->queryTop($this->userBookmarks($userId, false));
+	}
+
+	/**
+	 * @param int $userId
+	 *
+	 * @return QueryBuilder
+	 */
+	public function userBookmarksPostsCountComments(int $userId): QueryBuilder
+	{
+		return $this->queryCountComments($this->userBookmarks($userId, false));
 	}
 
 }

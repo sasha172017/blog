@@ -3,9 +3,9 @@
 
 namespace App\Controller;
 
-use App\Repository\PostRepository;
+use App\Services\PostPagination;
+use App\Services\PostPaginationSortQuery;
 use App\Services\UrlRemember;
-use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,24 +19,20 @@ class BlogController extends AbstractController
 {
 	/**
 	 * @Route("/", name="blog_index")
-	 * @param Request            $request
-	 * @param PostRepository     $postRepository
-	 * @param UrlRemember        $urlRemember
-	 * @param PaginatorInterface $paginator
-	 * @param int                $postLimitPerPage
+	 * @param Request                 $request
+	 * @param UrlRemember             $urlRemember
+	 * @param PostPagination          $pagination
+	 *
+	 * @param PostPaginationSortQuery $paginationSortQuery
 	 *
 	 * @return Response
 	 */
-	public function index(Request $request, PostRepository $postRepository, UrlRemember $urlRemember, PaginatorInterface $paginator, int $postLimitPerPage): Response
+	public function index(Request $request, UrlRemember $urlRemember, PostPagination $pagination, PostPaginationSortQuery $paginationSortQuery): Response
 	{
 		$urlRemember->remember();
 
-		$pagination = $paginator->paginate(
-			$postRepository->paginationQuery(),
-			$request->query->getInt('page', 1),
-			$postLimitPerPage
-		);
+		$paginator = $pagination->pagination($paginationSortQuery->post());
 
-		return $this->render($request->isXmlHttpRequest() ? 'post/_items.html.twig' : 'post/index.html.twig', ['pagination' => $pagination]);
+		return $this->render($request->isXmlHttpRequest() ? 'post/_items.html.twig' : 'post/index.html.twig', ['pagination' => $paginator]);
 	}
 }

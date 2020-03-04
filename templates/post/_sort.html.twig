@@ -1,12 +1,12 @@
 <div id="sort" class="mt-4">
-
-
     <div class="row">
 
         <div class="col">
             <div class="btn-group btn-group-sm bg-light" role="group">
-                <a id="all-post" href="{{ path('blog_index') }}" class="btn btn-{{ (app.request.get('_route') != 'blog_index') or (app.request.get('sort') is not empty) ? 'outline-' : '' }}primary">Все <span class="badge badge-success">{{count}}</span></a>
-                <a id="sort-top" href="{{ path('post_top') }}" class="btn btn-{{ (app.request.get('_route') != 'post_top') or (app.request.get('sort') is not empty) ? 'outline-' : '' }}danger">Лучшие</a>
+                <a id="all-post" href="{{ path('blog_index') }}" class="btn btn-{{ app.request.get('sort') is not empty ? 'outline-' : '' }}primary">Все <span class="badge badge-success">{{count}}</span></a>
+
+                {{ knp_pagination_sortable(pagination, 'Лучшие', 'top', {class : 'knp-pagination btn btn btn-' ~ (pagination.isSorted('top') ? 'danger' : 'outline-danger') } ) }}
+
             </div>
         </div>
 
@@ -17,7 +17,8 @@
 
                 {{ knp_pagination_sortable(pagination, 'Просмотры', 'p.views', {class : 'knp-pagination btn btn btn-' ~ (pagination.isSorted('p.views') ? 'info' : 'outline-info') } ) }}
 
-                {{ knp_pagination_sortable(pagination, 'Коментарии', 'comments', {class : 'knp-pagination btn btn btn-' ~ (pagination.isSorted('comments') ? 'info' : 'outline-info') } ) }}
+                {{ knp_pagination_sortable(pagination, 'Коментарии', 'countComments', {class : 'knp-pagination btn btn btn-' ~ (pagination.isSorted('countComments') ? 'info' : 'outline-info') } ) }}
+
             </div>
         </div>
 

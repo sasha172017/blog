@@ -13,8 +13,8 @@ function postAjax(url) {
 		beforeSend: () => sniperStart(),
 		success: (data) => $('#posts').html(data),
 		error: () => alert('Error'),
-
-	}).then(() => sniperEnd());
+		complete: () => sniperEnd()
+	});
 }
 
 
