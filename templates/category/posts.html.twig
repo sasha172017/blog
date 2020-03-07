@@ -1,5 +1,12 @@
 {% extends 'post/index.html.twig' %}
 
+{% block search %}
+    {{ include('search/_form.html.twig', {
+        route : 'category_posts_search',
+        action : path('category_posts_search', {'slug' : category.slug})
+    }) }}
+{% endblock %}
+
 {% block posts_header %}
     <div class="text-center my-4">
         <h1 class="mb-5">{{ category.title }} </h1>

@@ -193,4 +193,78 @@ class PostRepository extends ServiceEntityRepository
 		return $this->queryCountComments($this->userBookmarks($userId, false));
 	}
 
+	/**
+	 * @param string $q
+	 *
+	 * @return string|string[]
+	 */
+	private function preparationSearchQuery(string $q)
+	{
+		return str_replace(['@', '*', '(', ')', '-', '+', '=', '<?>', '>'], ' ', $q);
+	}
+
+	/**
+	 * @param string $q
+	 *
+	 * @return QueryBuilder
+	 */
+	public function search(string $q): QueryBuilder
+	{
+		$query = $this->createQueryBuilder('p')
+			//->addSelect('MATCH_AGAINST(p.title, p.summary, p.content) AGAINST(:q boolean) as hidden relev')
+			//->andWhere('MATCH_AGAINST(p.title, p.summary, p.content) AGAINST(:q boolean) > 0')
+			->andWhere('MATCH_AGAINST(p.title, p.summary, p.content) AGAINST(:q boolean) > 0')
+			->setParameter('q', $q);
+
+		return $this->paginationDefaultSort($query);
+	}
+
+	/**
+	 * @param string $q
+	 * @param int    $categoryId
+	 *
+	 * @return QueryBuilder
+	 */
+	public function searchWithCategory(string $q, int $categoryId): QueryBuilder
+	{
+		$query = $this->search($q);
+
+		return $query->addSelect('p', 'c')
+			->leftJoin('p.categories', 'c')
+			->andWhere('c.id = :categoryId')
+			->setParameter('categoryId', $categoryId);
+	}
+
+	/**
+	 * @param string $q
+	 * @param int    $userId
+	 *
+	 * @return QueryBuilder
+	 */
+	public function searchWithUser(string $q, int $userId): QueryBuilder
+	{
+		$query = $this->search($q);
+
+		return $query->addSelect('p', 'u')
+			->leftJoin('p.author', 'u')
+			->andWhere('u.id = :userId')
+			->setParameter('userId', $userId);
+	}
+
+	/**
+	 * @param string $q
+	 * @param int    $userId
+	 *
+	 * @return QueryBuilder
+	 */
+	public function searchInBookmarks(string $q, int $userId): QueryBuilder
+	{
+		$query = $this->search($q);
+
+		return $query->addSelect('p', 'u')
+			->leftJoin('p.users', 'u')
+			->andWhere('u.id = :userId')
+			->setParameter('userId', $userId);
+	}
+
 }

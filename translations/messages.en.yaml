@@ -82,6 +82,13 @@ post:
     content: 'Content'
 
   empty_items: 'No records found!'
+  sort:
+    all: 'All posts'
+    rating: 'Rating'
+    top: 'Top'
+    views: 'Views'
+    comments: 'Comments'
+  search: 'Search'
 
 category:
   title: 'Categories'

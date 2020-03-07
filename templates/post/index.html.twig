@@ -2,11 +2,18 @@
 
 {% block content %}
 
+    {% block search %}
+        {{ include('search/_form.html.twig', {
+            route : 'post_search',
+            action: path('post_search')
+        }) }}
+    {% endblock %}
+
+    {% block posts_header %}{% endblock %}
+
     <div class="post-index post-sniper-bg position-relative">
 
         {{ include('post/_sniper.html.twig') }}
-
-        {% block posts_header %}{% endblock %}
 
         <div id="posts">
             {{ include('post/_items.html.twig', {pagination : pagination}) }}
@@ -18,5 +25,6 @@
 
 {% block javascripts %}
     {{ parent() }}
+    {{ encore_entry_script_tags('mark-js') }}
     {{ encore_entry_script_tags('post') }}
 {% endblock %}

@@ -35,8 +35,13 @@
                             </li>
 
                             <li class="nav-item ">
-                                <a class="nav-link" href="{{ path('api_entrypoint') }}">API</a>
+                                <a class="nav-link" data-toggle="collapse" href="#search" role="button" aria-expanded="false" aria-controls="search">
+                                    <i class="fas fa-search"></i> {{ 'post.search'|trans }}
+                                </a>
+                            </li>
 
+                            <li class="nav-item ">
+                                <a class="nav-link" href="{{ path('api_entrypoint') }}">API</a>
                             </li>
 
                             <li class="nav-item dropdown">

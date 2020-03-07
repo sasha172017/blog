@@ -18,7 +18,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class BlogController extends AbstractController
 {
 	/**
-	 * @Route("/", name="blog_index")
+	 * @Route("/{direcion}/{page<\d+>?1}", name="blog_index")
 	 * @param Request                 $request
 	 * @param UrlRemember             $urlRemember
 	 * @param PostPagination          $pagination

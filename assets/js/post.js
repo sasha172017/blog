@@ -17,13 +17,54 @@ function postAjax(url) {
 	});
 }
 
+function markText()
+{
+	let q = $('input[name="q"]').val();
 
-$(document).on("click", "#sort-top, #all-post, .knp-pagination", function (e) {
+	if (q.length > 0) {
+		$('.js-mark').mark(q);
+	}
+}
+
+$(document).ready(function () {
+	markText();
+});
+
+$(document).on('click', '#all-post, .knp-pagination', function (e) {
 	postAjax($(this).attr('href'));
 	return e.preventDefault();
 });
 
-$(document).on("click", ".pagination a.page-link", function (e) {
+$(document).on('click', '.pagination a.page-link', function (e) {
 	postAjax($(this).attr('href'));
 	return e.preventDefault();
+});
+
+$(document).on('click', '#reset-search', function (e) {
+	postAjax($(this).attr('href'));
+	$('input[name="q"]').val(null);
+
+	return e.preventDefault();
+});
+
+$(document).on('submit', '#search-form', function (e) {
+
+	let $this = $(this);
+
+	$.ajax({
+		async: false,
+		method: $this.attr('method'),
+		url: $this.attr('action'),
+		data: $this.serialize(),
+		beforeSend: () => sniperStart(),
+		success: function (data) {
+			$('#posts').html(data);
+			markText();
+		},
+		error: () => alert('Error'),
+		complete: () => sniperEnd()
+	});
+
+	return e.preventDefault();
+
 });

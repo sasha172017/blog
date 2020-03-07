@@ -136,4 +136,74 @@ class UserController extends AbstractController
 		return $this->redirect($urlRemember->previous());
 	}
 
+	/**
+	 * @Route("/{nickname}/posts/search", name="user_posts_search", methods={"GET"})
+	 * @param Request                 $request
+	 * @param User                    $user
+	 * @param UrlRemember             $urlRemember
+	 * @param PostPagination          $pagination
+	 * @param PostRepository          $postRepository
+	 *
+	 * @param PostPaginationSortQuery $paginationSortQuery
+	 *
+	 * @return Response
+	 */
+	public function search(Request $request, User $user, UrlRemember $urlRemember, PostPagination $pagination, PostRepository $postRepository, PostPaginationSortQuery $paginationSortQuery): Response
+	{
+		$urlRemember->remember();
+
+		if (!empty($request->get('q')))
+		{
+			$query = $postRepository->searchWithUser($request->get('q'), $user->getId());
+		}
+
+		$paginator = $pagination->pagination($query ?? $paginationSortQuery->user($user->getId()));
+
+		if ($request->isXmlHttpRequest())
+		{
+			return $this->render('post/_items.html.twig', ['pagination' => $paginator]);
+		}
+
+		return $this->render('user/posts.html.twig', [
+			'pagination' => $paginator,
+			'user'       => $user
+		]);
+	}
+
+	/**
+	 * @Route("/{nickname}/bookrmaks/search", name="user_bookmarks_posts_search", methods={"GET"})
+	 * @param Request                 $request
+	 * @param User                    $user
+	 * @param UrlRemember             $urlRemember
+	 * @param PostPagination          $pagination
+	 * @param PostRepository          $postRepository
+	 *
+	 * @param PostPaginationSortQuery $paginationSortQuery
+	 *
+	 * @return Response
+	 */
+	public function searchBookmarks(Request $request, User $user, UrlRemember $urlRemember, PostPagination $pagination, PostRepository $postRepository, PostPaginationSortQuery $paginationSortQuery): Response
+	{
+		$this->denyAccessUnlessGranted(BookmarksVoter::SHOW, $user, 'Authors can only see bookmarks!');
+
+		$urlRemember->remember();
+
+		if (!empty($request->get('q')))
+		{
+			$query = $postRepository->searchInBookmarks($request->get('q'), $user->getId());
+		}
+
+		$paginator = $pagination->pagination($query ?? $paginationSortQuery->userBookmarks($user->getId()));
+
+		if ($request->isXmlHttpRequest())
+		{
+			return $this->render('post/_items.html.twig', ['pagination' => $paginator]);
+		}
+
+		return $this->render('user/bookmarks.html.twig', [
+			'pagination' => $paginator,
+			'user'       => $user
+		]);
+	}
+
 }

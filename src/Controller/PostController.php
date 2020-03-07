@@ -5,8 +5,11 @@ namespace App\Controller;
 use App\Entity\Post;
 use App\Form\CommentType;
 use App\Form\PostType;
+use App\Repository\PostRepository;
 use App\Security\Voter\PostVoter;
 use App\Services\FileUploader;
+use App\Services\PostPagination;
+use App\Services\UrlRemember;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -209,6 +212,29 @@ class PostController extends AbstractController
 		$this->addFlash('success', $translator->trans('post.messages.rating'));
 
 		return $this->redirectToRoute('post_show', ['slug' => $post->getSlug()]);
+	}
+
+	/**
+	 * @Route("/search", name="post_search", methods={"GET"})
+	 * @param Request        $request
+	 * @param UrlRemember    $urlRemember
+	 * @param PostPagination $pagination
+	 * @param PostRepository $postRepository
+	 *
+	 * @return Response
+	 */
+	public function search(Request $request, UrlRemember $urlRemember, PostPagination $pagination, PostRepository $postRepository): Response
+	{
+		$urlRemember->remember();
+
+		if (!empty($request->get('q')))
+		{
+			$query = $postRepository->search($request->get('q'));
+		}
+
+		$paginator = $pagination->pagination($query ?? null);
+
+		return $this->render($request->isXmlHttpRequest() ? 'post/_items.html.twig' : 'post/index.html.twig', ['pagination' => $paginator]);
 	}
 
 }

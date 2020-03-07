@@ -82,6 +82,14 @@ post:
 
   empty_items: 'Публикации отсутствуют!'
 
+  sort:
+    all: 'Все'
+    rating: 'Рейтинг'
+    top: 'Лучшие'
+    views: 'Просмотры'
+    comments: 'Комментарии'
+  search: 'Поиск'
+
 category:
   title: 'Категории'
 

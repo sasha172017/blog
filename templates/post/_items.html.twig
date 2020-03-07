@@ -1,6 +1,6 @@
-{{ include('post/_sort.html.twig', {count : pagination.totalItemCount}) }}
-
 {% if pagination is not empty %}
+
+    {{ include('post/_sort.html.twig', {count : pagination.totalItemCount}) }}
 
     {% for i, post in pagination %}
 
@@ -9,8 +9,8 @@
                 <img class="card-img-top" src="{{ asset('uploads/posts/' ~ post.image) }}" alt="">
             {% endif %}
             <div class="card-body">
-                <h2 class="card-title">{{ post.title }}</h2>
-                <p class="card-text">
+                <h2 class="card-title js-mark">{{ post.title }}</h2>
+                <p class="card-text js-mark">
                     {{ post.summary }}
                 </p>
 

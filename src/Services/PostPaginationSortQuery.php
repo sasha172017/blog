@@ -3,13 +3,19 @@
 
 namespace App\Services;
 
-
 use App\Repository\PostRepository;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+/**
+ * Class PostPaginationSortQuery
+ * @package App\Services
+ */
 class PostPaginationSortQuery
 {
+	private const PARAM_TOP = 'top';
+	private const PARAM_COMMENTS = 'countComments';
+
 	/**
 	 * @var string
 	 */
@@ -39,7 +45,7 @@ class PostPaginationSortQuery
 	{
 		switch ($this->sort)
 		{
-			case 'top':
+			case self::PARAM_TOP:
 				$query = $this->postRepository->top();
 				break;
 			case 'countComments':
@@ -57,10 +63,10 @@ class PostPaginationSortQuery
 	{
 		switch ($this->sort)
 		{
-			case 'top':
+			case self::PARAM_TOP:
 				$query = $this->postRepository->categoryPostsTop($categoryId);
 				break;
-			case 'countComments':
+			case self::PARAM_COMMENTS:
 				$query = $this->postRepository->categoryPostsCountComments($categoryId);
 				break;
 			default:
@@ -80,10 +86,10 @@ class PostPaginationSortQuery
 	{
 		switch ($this->sort)
 		{
-			case 'top':
+			case self::PARAM_TOP:
 				$query = $this->postRepository->userPostsTop($userId);
 				break;
-			case 'countComments':
+			case self::PARAM_COMMENTS:
 				$query = $this->postRepository->userPostsCountComments($userId);
 				break;
 			default:
@@ -103,10 +109,10 @@ class PostPaginationSortQuery
 	{
 		switch ($this->sort)
 		{
-			case 'top':
+			case self::PARAM_TOP:
 				$query = $this->postRepository->userBookmarksPostsTop($userId);
 				break;
-			case 'countComments':
+			case self::PARAM_COMMENTS:
 				$query = $this->postRepository->userBookmarksPostsCountComments($userId);
 				break;
 			default:
