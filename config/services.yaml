@@ -11,6 +11,8 @@ parameters:
     post_limit_per_page: 5
     post_images_directory: '%kernel.project_dir%/public/uploads/posts'
 
+    user_avatars_directory: '%kernel.project_dir%/public/uploads/avatars'
+
     url_remember_default_route: 'blog_index'
 
 services:
@@ -24,6 +26,8 @@ services:
             $fakerLocales: '%factory_locales%'
             $postImagesDirectory: '%post_images_directory%'
             $postLimitPerPage: '%post_limit_per_page%'
+            $userAvatarsDirectory: '%user_avatars_directory%'
+
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name

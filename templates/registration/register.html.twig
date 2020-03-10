@@ -26,3 +26,8 @@
     </div>
     {{ form_end(registrationForm) }}
 {% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('bs-custom-file-input') }}
+{% endblock %}

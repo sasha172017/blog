@@ -58,6 +58,12 @@ body {
   }
 }
 
+.avatar{
+  width: 50px;
+  border-radius: 50%;
+  height: 50px;
+}
+
 .no-avatar {
   color: $white;
   min-width: 50px;

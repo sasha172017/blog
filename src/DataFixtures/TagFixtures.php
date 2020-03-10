@@ -70,6 +70,6 @@ class TagFixtures extends Fixture implements OrderedFixtureInterface
 	 */
 	public function getOrder()
 	{
-		return 2;
+		return 1;
 	}
 }

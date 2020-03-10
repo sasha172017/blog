@@ -1,0 +1,59 @@
+{{ form_start(form) }}
+<div class="card my-4">
+    <div class="card-header text-center">
+        <h3>{{ 'app.auth.edit_profile'|trans }}</h3>
+    </div>
+
+    <div class="card-body">
+
+        {{ form_row(form.email) }}
+
+        {{ form_row(form.nickname) }}
+
+        {{ form_row(form.locale) }}
+
+        {{ form_row(form.dateOfBirth) }}
+
+        <ul class="nav nav-tabs" id="userTab">
+            <li class="nav-item">
+                <a class="nav-link active" id="avatar-tab" data-toggle="tab" href="#avatar" role="tab" aria-controls="avatar" aria-selected="true">{{ 'app.auth.avatar'|trans }}</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="pass-tab" data-toggle="tab" href="#pass" role="tab" aria-controls="profile" aria-selected="false">{{ 'app.auth.change_password'|trans }}</a>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active p-3" id="avatar" role="tabpanel" aria-labelledby="avatar-tab">
+
+                {% if user.avatar is not empty %}
+                    <div class="row align-items-center mb-4">
+                        <div class="col-sm-2">
+                            <span class="mr-3">{{ 'app.auth.avatar'|trans }}</span>
+                        </div>
+
+                        <div class="col-sm-10">
+                            <img class="border img-fluid" src="{{ asset('uploads/avatars/' ~ app.user.avatar) }}" alt="">
+
+                        </div>
+                    </div>
+                {% endif %}
+
+                {{ form_row(form.avatar) }}
+
+            </div>
+            <div class="tab-pane fade p-3" id="pass" role="tabpanel" aria-labelledby="pass-tab">
+                {{ form_row(form.plainPassword) }}
+            </div>
+
+        </div>
+
+
+    </div>
+
+    <div class="card-footer text-center">
+        <button class="btn btn-success ">{{ button_label|default('app.save'|trans) }}</button>
+    </div>
+
+</div>
+{{ form_end(form) }}

@@ -1,5 +1,7 @@
 {% extends 'post/index.html.twig' %}
 
+{% block title %}{{ 'post.user_posts'|trans }} {{ user.nickname }}{% endblock %}
+
 {% block search %}
     {{ include('search/_form.html.twig', {
         route : 'user_posts_search',

@@ -12,15 +12,22 @@ app:
   registration: 'Регистрация'
   new_user: 'Регистраниця нового пользователя'
   auth:
+    edit_profile: 'Редактированиее учетной записи'
     email: 'Email'
     nickname: 'Nickname'
     locale: 'Язык'
+    avatar: 'Аватар'
+    new_avatar: 'Загрузить'
     date_of_birth: 'Дата рождения'
     password: 'Пароль'
     repeat_password: 'Повторите пароль'
+    change_password: 'Смена пароля'
     active_profile: 'Ваша учетная запись не активирована, перейдите по ссылке в письме для активации!'
     resend_email: 'Отправить письмо с активацией'
+    profile: 'Профиль'
     messages:
+      success:
+        edit: 'Учетная запись отредатирована!'
       confirmation:
         success: '%s, Ваша учетная запись активирована!'
         error: 'Не удалось активировать учетную запись!'

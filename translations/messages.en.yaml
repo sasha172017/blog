@@ -12,15 +12,22 @@ app:
   registration: 'Registration'
   new_user: 'New User Registration'
   auth:
+    edit_profile: 'Edit profile'
     email: 'Email'
     nickname: 'Nickname'
     locale: 'Locale'
+    avatar: 'Avatar'
+    new_avatar: 'Load new'
     date_of_birth: 'Date of birth'
     password: 'Password'
     repeat_password: 'Repeat Password'
+    change_password: 'Change password'
     active_profile: 'Your account is not activated, follow the link in the activation letter!'
     resend_email: 'Resend Email'
+    profile: 'Profile'
     messages:
+      success:
+        edit: 'Profile edited!'
       confirmation:
         success: '%s, your account is activated!'
         error: 'Failed to activate a profile!'

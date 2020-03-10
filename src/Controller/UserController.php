@@ -4,8 +4,11 @@ namespace App\Controller;
 
 use App\Entity\Post;
 use App\Entity\User;
+use App\Form\UserFormType;
 use App\Repository\PostRepository;
 use App\Security\Voter\BookmarksVoter;
+use App\Security\Voter\UserVoter;
+use App\Services\FileUploader;
 use App\Services\PostPagination;
 use App\Services\PostPaginationSortQuery;
 use App\Services\UrlRemember;
@@ -16,6 +19,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -29,7 +33,7 @@ class UserController extends AbstractController
 	 * @Route("/{nickname}/posts", name="user_posts", methods={"GET"})
 	 * @param Request                 $request
 	 * @param UrlRemember             $urlRemember
-	 * @param User                    $user	 *
+	 * @param User                    $user *
 	 * @param PostPagination          $pagination
 	 * @param PostPaginationSortQuery $paginationSortQuery
 	 *
@@ -112,7 +116,7 @@ class UserController extends AbstractController
 	/**
 	 * @Route("/remove-from-bookrmaks/{slug}", name="user_remove_from_bookmarks", methods={"GET"})
 	 * @param UrlRemember         $urlRemember
-	 * @param Post                $post	 *
+	 * @param Post                $post *
 	 * @param TranslatorInterface $translator
 	 *
 	 * @return RedirectResponse
@@ -204,6 +208,54 @@ class UserController extends AbstractController
 			'pagination' => $paginator,
 			'user'       => $user
 		]);
+	}
+
+	/**
+	 * @Route("/{nickname}/edit", name="user_edit", methods={"GET", "POST"})
+	 * @param Request             $request
+	 * @param User                $user
+	 * @param FileUploader        $fileUploader
+	 * @param TranslatorInterface $translator
+	 *
+	 * @return RedirectResponse|Response
+	 */
+	public function edit(Request $request, User $user, FileUploader $fileUploader, TranslatorInterface $translator, UserPasswordEncoderInterface $passwordEncoder)
+	{
+		$this->denyAccessUnlessGranted(UserVoter::EDIT, $user, 'Access denied');
+
+		$form = $this->createForm(UserFormType::class, $user);
+		$form->handleRequest($request);
+
+		if ($form->isSubmitted() && $form->isValid())
+		{
+
+			$password = $form->get('plainPassword')->getData();
+
+			if (!empty($password))
+			{
+				$user->setPassword($passwordEncoder->encodePassword($user, $password));
+			}
+
+			$avatar = $form->get('avatar')->getData();
+			if ($avatar)
+			{
+				$imageFileName = $fileUploader->upload($avatar, 'user_avatars_directory');
+				@unlink($this->getParameter('user_avatars_directory') . '/' . $user->getAvatar());
+				$user->setAvatar($imageFileName);
+			}
+
+			$this->getDoctrine()->getManager()->flush();
+
+			$this->addFlash('success', $translator->trans('app.auth.messages.success.edit'));
+
+			return $this->redirectToRoute('blog_index');
+		}
+
+		return $this->render('user/edit.html.twig', [
+			'user' => $user,
+			'form' => $form->createView(),
+		]);
+
 	}
 
 }

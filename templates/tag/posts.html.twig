@@ -1,5 +1,5 @@
 {% extends 'post/index.html.twig' %}
-
+{% block title %}{{ tag.title }}{% endblock %}
 {% block search %}
     {{ include('search/_form.html.twig', {
         route : 'tag_posts_search',

@@ -7,7 +7,9 @@ use App\Form\RegistrationFormType;
 use App\Repository\UserRepository;
 use App\Security\LoginFormAuthenticator;
 use App\Services\ConfirmationEmail;
+use App\Services\FileUploader;
 use App\Twig\BootstrapColorExtension;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,16 +29,16 @@ class RegistrationController extends AbstractController
 	 * @param UserPasswordEncoderInterface $passwordEncoder
 	 * @param GuardAuthenticatorHandler    $guardHandler
 	 * @param LoginFormAuthenticator       $authenticator
-	 *
 	 * @param TokenGeneratorInterface      $generator
-	 *
 	 * @param ConfirmationEmail            $email
+	 * @param FileUploader                 $fileUploader
+	 * @param string                       $userAvatarsDirectory
 	 *
 	 * @return Response
-	 * @throws \Exception
 	 * @throws TransportExceptionInterface
+	 * @throws Exception
 	 */
-	public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder, GuardAuthenticatorHandler $guardHandler, LoginFormAuthenticator $authenticator, TokenGeneratorInterface $generator, ConfirmationEmail $email): Response
+	public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder, GuardAuthenticatorHandler $guardHandler, LoginFormAuthenticator $authenticator, TokenGeneratorInterface $generator, ConfirmationEmail $email, FileUploader $fileUploader, string $userAvatarsDirectory): Response
 	{
 		$user = new User();
 		$form = $this->createForm(RegistrationFormType::class, $user);
@@ -51,6 +53,13 @@ class RegistrationController extends AbstractController
 					$form->get('plainPassword')->getData()
 				)
 			);
+
+			$avatar = $form->get('avatar')->getData();
+			if ($avatar)
+			{
+				$imageFileName = $fileUploader->upload($avatar, 'user_avatars_directory');
+				$user->setAvatar($imageFileName);
+			}
 
 			$user
 				->setVerificationToken($generator->generateToken())

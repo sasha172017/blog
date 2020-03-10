@@ -17,7 +17,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Constraints\Length;
 
-class RegistrationFormType extends AbstractType
+class UserFormType extends AbstractType
 {
 	private $locales;
 
@@ -37,17 +37,19 @@ class RegistrationFormType extends AbstractType
 
 		$builder
 			->add('email', EmailType::class, [
-				'label_format' => 'app.auth.email'
+				'label_format' => 'app.auth.email',
+				'disabled'     => true
 			])
 			->add('nickname', TextType::class, [
-				'label_format' => 'app.auth.nickname'
+				'label_format' => 'app.auth.nickname',
+				'disabled'     => true
 			])
 			->add('locale', ChoiceType::class, [
 				'label_format' => 'app.auth.locale',
-				'choices' => array_flip($this->locales),
+				'choices'      => array_flip($this->locales),
 			])
 			->add('avatar', FileType::class, [
-				'label'       => 'app.auth.avatar',
+				'label'       => 'app.auth.new_avatar',
 
 				// unmapped means that this field is not associated to any entity property
 				'mapped'      => false,
@@ -71,18 +73,18 @@ class RegistrationFormType extends AbstractType
 			])
 			->add('dateOfBirth', DateType::class, [
 				'label_format' => 'app.auth.date_of_birth',
-				'years' => range($year - 100, $year - 6)
+				'years'        => range($year - 100, $year - 6)
 			])
 			->add('plainPassword', RepeatedType::class, [
-				'type'        => PasswordType::class,
+				'type'           => PasswordType::class,
 				'first_options'  => ['label' => 'app.auth.password'],
 				'second_options' => ['label' => 'app.auth.repeat_password'],
-				'mapped'      => false,
-				'constraints' => [
-
+				'mapped'         => false,
+				'required'       => false,
+				'constraints'    => [
 					new Length([
-						'min'        => 6,
-						'max'        => 4096,
+						'min' => 6,
+						'max' => 4096,
 					]),
 				],
 			]);
