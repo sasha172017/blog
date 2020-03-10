@@ -321,8 +321,6 @@ class Post
 	 */
 	public function onPreFlush(): void
 	{
-		$this->traitOnPreFlush();
-
 		$this->setRating($this->getRatingUp() - $this->getRatingDown());
 	}
 

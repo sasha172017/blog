@@ -59,10 +59,7 @@ trait Timestamps
 	 */
 	public function onPreFlush(): void
 	{
-		if (empty($this->updatedAt))
-		{
-			$this->setUpdatedAt((new \DateTime('now'))->getTimestamp());
-		}
+		$this->setUpdatedAt((new \DateTime('now'))->getTimestamp());
 	}
 
 }

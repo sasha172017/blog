@@ -1,0 +1,51 @@
+<div class="row justify-content-center">
+    <div class="col-xl-10">
+        <hr>
+        <span class="badge badge-secondary"><i class="fas fa-comments"></i> {{ post.comments|length }} {{ 'comment.count_comments'|trans }}</span>
+
+        {% for comment in post.comments %}
+
+            <div class="bg-white d-flex shadow-sm bd-callout bd-callout-{{ color_by_key(comment.author.color) }} border-{{ color_by_key(comment.author.color) }}">
+
+                <div class="mr-4 ">
+                    {% if comment.author.avatar %}
+                        <img class="avatar border" src="{{ asset('uploads/avatars/' ~ comment.author.avatar)|imagine_filter('user_thumb') }}" alt="">
+                    {% else %}
+                        <div class="no-avatar bg-{{ color_by_key(comment.author.color) }}">
+                            <span>{{ comment.author.nickname|first|upper }}</span>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="w-100">
+
+                    <div class="mb-2 d-flex justify-content-between align-items-center">
+                            <span class="font-weight-bold">
+                                {{ comment.author.nickname }}
+                            </span>
+
+                        {% if is_author(comment) %}
+                            <div class="d-flex">
+                                <a href="{{ path('comment_edit', {'id' : comment.id}) }}" data-ajax-href="{{ path('comment_edit_ajax', {'id' : comment.id}) }}" data-comment-action="edit" class="btn btn-outline-primary btn-sm border-0" data-toggle="tooltip" data-placement="top" data-html="true" title="{{ 'app.edit'|trans }}"><i class="fas fa-pencil-alt"></i></a>
+                                <a href="{{ path('comment_delete', {'id' : comment.id, 'post_id' : post.id}) }}" data-comment-action="delete" class="btn btn-sm btn-outline-danger border-0" data-toggle="tooltip" data-placement="top" data-html="true" title="{{ 'app.delete'|trans }}"><i class="fas fa-trash"></i></a>
+                            </div>
+                        {% endif %}
+
+                    </div>
+
+                    <div class="comment-content mb-3">
+                        {{ comment.content }}
+                    </div>
+
+                    <div class="text-right">
+                        <small class="text-muted"><i class="far fa-calendar-alt"></i> <span class="comment-updated">{{ comment.updatedAt | date('d F Y, H:m:s') }}</span></small>
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        {% endfor %}
+    </div>
+</div>

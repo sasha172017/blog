@@ -27,6 +27,7 @@ Encore
     .addEntry('bs-custom-file-input', './assets/js/bsCustomFileInput.js')
     .addEntry('mark-js', './assets/js/jquery.mark.min.js')
     .addEntry('post', './assets/js/post.js')
+    .addEntry('comment', './assets/js/comment.js')
 
     // When enabled, Webpack "splits" your files into smaller pieces for greater optimization.
     .splitEntryChunks()
