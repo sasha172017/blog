@@ -45,7 +45,7 @@ class PostFixtures extends Fixture implements OrderedFixtureInterface
 			for ($i = 0; $i < self::COUNT; $i++)
 			{
 				$user     = $this->getReference('user_' . random_int(0, UserFixtures::COUNT - 1) . '_' . $item['locale']);
-				$category = $this->getReference('category_' . random_int(0, CategoryFixtures::COUNT - 1) . '_' . $item['locale']);
+				$tag = $this->getReference('tag_' . random_int(0, TagFixtures::COUNT - 1) . '_' . $item['locale']);
 
 				$title = $item['faker']->realText(50);
 				$time  = $item['faker']->unixTime;
@@ -63,7 +63,7 @@ class PostFixtures extends Fixture implements OrderedFixtureInterface
 					->setContent($item['faker']->paragraph(random_int(5, 50)))
 					->setViews(random_int($total, $total + 100))
 					->setAuthor($user)
-					->addCategory($category)
+					->addTag($tag)
 					->setRatingUp($ratingUp)
 					->setRatingDown($ratingDown)
 					->setRating($rating)

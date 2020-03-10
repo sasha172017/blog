@@ -5,6 +5,13 @@
     {% for i, post in pagination %}
 
         <div class="card my-4 dynamic-shadow">
+
+            <div class="card-header">
+                {% for tag in post.tags %}
+                    <span class="badge badge-{{ color_by_key(tag.color) }}"><i class="fas fa-tags"></i> {{ tag.title }}</span>
+                {% endfor %}
+            </div>
+
             {% if post.image is not empty %}
                 <img class="card-img-top" src="{{ asset('uploads/posts/' ~ post.image) }}" alt="">
             {% endif %}

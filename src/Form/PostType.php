@@ -2,7 +2,7 @@
 
 namespace App\Form;
 
-use App\Entity\Category;
+use App\Entity\Tag;
 use App\Entity\Post;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -29,16 +29,16 @@ class PostType extends AbstractType
 			->add('title', TextType::class, [
 				'label_format' => 'post.form.title'
 			])
-			->add('categories', EntityType::class, [
+			->add('tags', EntityType::class, [
 				'attr'         => ['size' => 7],
-				'class'        => Category::class,
+				'class'        => Tag::class,
 				'required'     => true,
-				'choice_label' => static function ($category) {
-					return $category->getTitle();
+				'choice_label' => static function ($tag) {
+					return $tag->getTitle();
 				},
 				'choice_attr'  => ['size' => '10'],
 				'multiple'     => true,
-				'label_format' => 'post.form.categories'
+				'label_format' => 'post.form.tags'
 			])
 			->add('summary', TextType::class, [
 				'label_format' => 'post.form.summary'

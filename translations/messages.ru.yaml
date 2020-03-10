@@ -75,7 +75,7 @@ post:
 
   form:
     title: 'Заголовок'
-    categories: 'Категории'
+    tags: 'Теги'
     summary: 'Вводный текст'
     image: 'Изображение'
     content: 'Текст'
@@ -90,8 +90,8 @@ post:
     comments: 'Комментарии'
   search: 'Поиск'
 
-category:
-  title: 'Категории'
+tag:
+  title: 'Теги'
 
 comment:
   count_comments: 'комментариев'

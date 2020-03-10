@@ -76,7 +76,7 @@ post:
 
   form:
     title: 'Title'
-    categories: 'Categories'
+    tags: 'Tags'
     summary: 'Summary'
     image: 'Image'
     content: 'Content'
@@ -90,8 +90,8 @@ post:
     comments: 'Comments'
   search: 'Search'
 
-category:
-  title: 'Categories'
+tag:
+  title: 'Tags'
 
 comment:
   count_comments: 'comments'

@@ -2,7 +2,7 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Category;
+use App\Entity\Tag;
 use App\Services\FactoryLocales;
 use App\Twig\BootstrapColorExtension;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -10,7 +10,7 @@ use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
-class CategoryFixtures extends Fixture implements OrderedFixtureInterface
+class TagFixtures extends Fixture implements OrderedFixtureInterface
 {
 	public const COUNT = 10;
 
@@ -47,16 +47,16 @@ class CategoryFixtures extends Fixture implements OrderedFixtureInterface
 				$title = $item['faker']->country;
 				$time  = $item['faker']->unixTime;
 
-				$category = (new Category())
+				$tag = (new Tag())
 					->setTitle($title)
 					->setSlug($this->slugger->slug($title))
 					->setColor(random_int(0, count(BootstrapColorExtension::COLORS_CLASS) - 1))
 					->setCreatedAt($time)
 					->setUpdatedAt($time);
 
-				$this->addReference('category_' . $i . '_' . $item['locale'], $category);
+				$this->addReference('tag_' . $i . '_' . $item['locale'], $tag);
 
-				$manager->persist($category);
+				$manager->persist($tag);
 			}
 
 		}

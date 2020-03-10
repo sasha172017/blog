@@ -206,7 +206,7 @@ class PostController extends AbstractController
 	 */
 	public function ratingDown(Post $post, TranslatorInterface $translator): RedirectResponse
 	{
-		$post->setRatingDown($post->getRatingDown() - 1);
+		$post->setRatingDown($post->getRatingDown() + 1);
 		$this->getDoctrine()->getManager()->flush();
 
 		$this->addFlash('success', $translator->trans('post.messages.rating'));

@@ -6,10 +6,10 @@
 
     <div class="card my-4 ">
         <div class="py-2 px-3">
-            <h5 class="d-inline mb-0">{{ 'category.title'|trans }}: </h5>
-            {% for category in post.categories %}
-                <span class="my-1 badge badge-{{ color_by_key(category.color) }}">
-                    <h6 class="mb-0">{{ category.title }}</h6>
+            <h5 class="d-inline mb-0">{{ 'tag.title'|trans }}: </h5>
+            {% for tag in post.tags %}
+                <span class="my-1 badge badge-{{ color_by_key(tag.color) }}">
+                    <h6 class="mb-0">{{ tag.title }}</h6>
                 </span>
             {% endfor %}
         </div>
@@ -94,7 +94,7 @@
     <div class="">
         {{ include('default/user-block.html.twig', { 'post' : post }) }}
 
-        {{ render(controller('App\\Controller\\CategoryController::list')) }}
+        {{ render(controller('App\\Controller\\TagController::list')) }}
 
         {{ include('default/post-actions-block.html.twig', { 'post' : post }) }}
     </div>

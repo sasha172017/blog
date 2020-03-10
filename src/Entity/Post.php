@@ -13,7 +13,9 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Post
 {
-	use Timestamps;
+	use Timestamps {
+		onPreFlush as traitOnPreFlush;
+	}
 
 	/**
 	 * @ORM\Id()
@@ -59,10 +61,10 @@ class Post
 	private $image;
 
 	/**
-	 * @ORM\ManyToMany(targetEntity="App\Entity\Category", inversedBy="posts")
+	 * @ORM\ManyToMany(targetEntity="App\Entity\Tag", inversedBy="posts")
 	 * @ORM\OrderBy({"createdAt" = "DESC"})
 	 */
-	private $categories;
+	private $tags;
 
 	/**
 	 * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="post", orphanRemoval=true)
@@ -71,17 +73,17 @@ class Post
 	private $comments;
 
 	/**
-	 * @ORM\Column(type="integer", options={"default":0})
+	 * @ORM\Column(type="integer", options={"default":0}, nullable=true)
 	 */
 	private $ratingUp;
 
 	/**
-	 * @ORM\Column(type="integer", options={"default":0})
+	 * @ORM\Column(type="integer", options={"default":0}, nullable=true)
 	 */
 	private $ratingDown;
 
 	/**
-	 * @ORM\Column(type="integer", options={"default":0})
+	 * @ORM\Column(type="integer", options={"default":0}, nullable=true)
 	 */
 	private $rating;
 
@@ -92,9 +94,9 @@ class Post
 
 	public function __construct()
 	{
-		$this->categories = new ArrayCollection();
-		$this->comments   = new ArrayCollection();
-		$this->users      = new ArrayCollection();
+		$this->tags     = new ArrayCollection();
+		$this->comments = new ArrayCollection();
+		$this->users    = new ArrayCollection();
 	}
 
 	public function getId(): ?int
@@ -187,28 +189,28 @@ class Post
 	}
 
 	/**
-	 * @return Collection|Category[]
+	 * @return Collection|Tag[]
 	 */
-	public function getCategories(): Collection
+	public function getTags(): Collection
 	{
-		return $this->categories;
+		return $this->tags;
 	}
 
-	public function addCategory(Category $category): self
+	public function addTag(Tag $tag): self
 	{
-		if (!$this->categories->contains($category))
+		if (!$this->tags->contains($tag))
 		{
-			$this->categories[] = $category;
+			$this->tags[] = $tag;
 		}
 
 		return $this;
 	}
 
-	public function removeCategory(Category $category): self
+	public function removeTag(Tag $tag): self
 	{
-		if ($this->categories->contains($category))
+		if ($this->tags->contains($tag))
 		{
-			$this->categories->removeElement($category);
+			$this->tags->removeElement($tag);
 		}
 
 		return $this;
@@ -314,8 +316,13 @@ class Post
 		return $this;
 	}
 
+	/**
+	 * @ORM\PreFlush
+	 */
 	public function onPreFlush(): void
 	{
+		$this->traitOnPreFlush();
+
 		$this->setRating($this->getRatingUp() - $this->getRatingDown());
 	}
 

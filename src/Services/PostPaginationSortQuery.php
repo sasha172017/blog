@@ -59,18 +59,23 @@ class PostPaginationSortQuery
 		return $query;
 	}
 
-	public function category(int $categoryId): ?QueryBuilder
+	/**
+	 * @param int $tagId
+	 *
+	 * @return QueryBuilder|null
+	 */
+	public function tag(int $tagId): ?QueryBuilder
 	{
 		switch ($this->sort)
 		{
 			case self::PARAM_TOP:
-				$query = $this->postRepository->categoryPostsTop($categoryId);
+				$query = $this->postRepository->tagPostsTop($tagId);
 				break;
 			case self::PARAM_COMMENTS:
-				$query = $this->postRepository->categoryPostsCountComments($categoryId);
+				$query = $this->postRepository->tagPostsCountComments($tagId);
 				break;
 			default:
-				$query = $this->postRepository->categoryPosts($categoryId);
+				$query = $this->postRepository->tagPosts($tagId);
 				break;
 		}
 

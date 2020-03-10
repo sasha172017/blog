@@ -9,11 +9,11 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\CategoryRepository")
- * @UniqueEntity(fields={"title"}, message="Category arledy exist")
+ * @ORM\Entity(repositoryClass="App\Repository\TagRepository")
+ * @UniqueEntity(fields={"title"}, message="Tag arledy exist")
  * @ORM\HasLifecycleCallbacks
  */
-class Category
+class Tag
 {
 	use Timestamps;
 
@@ -35,7 +35,7 @@ class Category
 	private $slug;
 
 	/**
-	 * @ORM\ManyToMany(targetEntity="App\Entity\Post", mappedBy="categories")
+	 * @ORM\ManyToMany(targetEntity="App\Entity\Post", mappedBy="tags")
 	 * @ORM\OrderBy({"updatedAt" = "DESC"})
 	 */
 	private $posts;

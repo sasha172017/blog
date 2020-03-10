@@ -80,41 +80,41 @@ class PostRepository extends ServiceEntityRepository
 	}
 
 	/**
-	 * @param int  $categoryId
+	 * @param int  $tagId
 	 *
 	 * @param bool $defSort
 	 *
 	 * @return QueryBuilder
 	 */
-	public function categoryPosts(int $categoryId, bool $defSort = true): QueryBuilder
+	public function tagPosts(int $tagId, bool $defSort = true): QueryBuilder
 	{
 		$query = $this->createQueryBuilder('p')
-			->addSelect('p', 'c')
-			->leftJoin('p.categories', 'c')
-			->where('c.id = :categoryId')
-			->setParameter('categoryId', $categoryId);
+			->addSelect('p', 't')
+			->leftJoin('p.tags', 't')
+			->where('t.id = :tagId')
+			->setParameter('tagId', $tagId);
 
 		return $defSort ? $this->paginationDefaultSort($query) : $query;
 	}
 
 	/**
-	 * @param int $categoryId
+	 * @param int $tagId
 	 *
 	 * @return QueryBuilder
 	 */
-	public function categoryPostsTop(int $categoryId): QueryBuilder
+	public function tagPostsTop(int $tagId): QueryBuilder
 	{
-		return $this->queryTop($this->categoryPosts($categoryId, false));
+		return $this->queryTop($this->tagPosts($tagId, false));
 	}
 
 	/**
-	 * @param int $categoryId
+	 * @param int $tagId
 	 *
 	 * @return QueryBuilder
 	 */
-	public function categoryPostsCountComments(int $categoryId): QueryBuilder
+	public function tagPostsCountComments(int $tagId): QueryBuilder
 	{
-		return $this->queryCountComments($this->categoryPosts($categoryId, false));
+		return $this->queryCountComments($this->tagPosts($tagId, false));
 	}
 
 	/**
@@ -221,18 +221,18 @@ class PostRepository extends ServiceEntityRepository
 
 	/**
 	 * @param string $q
-	 * @param int    $categoryId
+	 * @param int    $tagId
 	 *
 	 * @return QueryBuilder
 	 */
-	public function searchWithCategory(string $q, int $categoryId): QueryBuilder
+	public function searchWithTag(string $q, int $tagId): QueryBuilder
 	{
 		$query = $this->search($q);
 
-		return $query->addSelect('p', 'c')
-			->leftJoin('p.categories', 'c')
-			->andWhere('c.id = :categoryId')
-			->setParameter('categoryId', $categoryId);
+		return $query->addSelect('p', 't')
+			->leftJoin('p.tags', 't')
+			->andWhere('t.id = :tagId')
+			->setParameter('tagId', $tagId);
 	}
 
 	/**
