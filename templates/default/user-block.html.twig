@@ -5,7 +5,7 @@
 
             <div class="mr-2">
                 {% if app.user.avatar %}
-                    <img class="avatar border" src="{{ asset('uploads/avatars/' ~ app.user.avatar) }}" alt="">
+                    <img class="avatar border" src="{{ asset('uploads/avatars/' ~ app.user.avatar)|imagine_filter('user_thumb') }}" alt="">
                 {% else %}
                     <div class="no-avatar bg-{{ color_by_key(app.user.color) }}">
                         <span>{{ app.user.nickname|first|upper }}</span>

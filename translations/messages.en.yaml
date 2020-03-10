@@ -101,8 +101,10 @@ tag:
   title: 'Tags'
 
 comment:
+  post: 'Post'
   count_comments: 'comments'
   publish: 'Publish comment'
+  edit: 'Edit comment'
   messages:
     access:
       edit: 'Authors can only edit this comment!'
