@@ -62,9 +62,9 @@
                 </div>
 
                 <div class="d-flex">
-                    <div class="pointer mr-3" data-toggle="tooltip" data-placement="top" title="{{ 'app.created'|trans }}: {{ post.createdAt|date('d F Y, H:m:s') }}">
+                    <div class="pointer mr-3" data-toggle="tooltip" data-placement="top" title="{{ 'app.created'|trans }}: {{ post.createdAt|localizedTimestamp }}">
                         <small>
-                            <i class="far fa-calendar-alt"></i> {{ post.updatedAt|date('d F Y, H:m') }}
+                            <i class="far fa-calendar-alt"></i> {{ post.updatedAt|localizedTimestamp }}
                         </small>
                     </div>
 

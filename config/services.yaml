@@ -8,6 +8,8 @@ parameters:
     app_locales: en|ru
     factory_locales: ['en_US','ru_RU']
 
+    date_time_format: 'd MMMM YYYY, h:m'
+
     post_limit_per_page: 5
     post_images_directory: '%kernel.project_dir%/public/uploads/posts'
 
@@ -21,6 +23,7 @@ services:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
         bind:
+            $dateTimeFormat : '%date_time_format%'
             $locales: '%app_locales%'
             $defaultLocale: '%locale%'
             $fakerLocales: '%factory_locales%'

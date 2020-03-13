@@ -2,14 +2,17 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Helpers\Timestamps;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
+ * @ApiResource
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  * @UniqueEntity(fields={"email"}, message="user.unique.email")
  * @UniqueEntity(fields={"nickname"}, message="user.unique.nickname")
@@ -96,6 +99,40 @@ class User implements UserInterface
 	 * @ORM\Column(type="string", length=50, nullable=true)
 	 */
 	private $avatar;
+
+	/**
+	 * @ORM\Column(type="integer")
+	 */
+	private $createdAt;
+
+	/**
+	 * @ORM\Column(type="integer")
+	 */
+	private $updatedAt;
+
+	public function getCreatedAt()
+	{
+		return $this->createdAt;
+	}
+
+	public function setCreatedAt(int $createdAt): self
+	{
+		$this->createdAt = $createdAt;
+
+		return $this;
+	}
+
+	public function getUpdatedAt()
+	{
+		return $this->updatedAt;
+	}
+
+	public function setUpdatedAt(int $updatedAt): self
+	{
+		$this->updatedAt = $updatedAt;
+
+		return $this;
+	}
 
 	public function __construct()
 	{

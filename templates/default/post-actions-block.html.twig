@@ -70,7 +70,7 @@
     <div class="py-2 px-3">
         <small>
             <span class="text-muted">{{ 'app.updated'|trans }}:</span>
-            <span>{{ post.updatedAt|date('d F Y, H:m') }}</span>
+            <span>{{ post.updatedAt|localizedTimestamp }}</span>
         </small>
     </div>
 
@@ -78,7 +78,7 @@
     <div class="py-2 px-3">
         <small>
             <span class="text-muted">{{ 'app.created'|trans }}:</span>
-            <span>{{ post.createdAt|date('d F Y, H:m') }}</span>
+            <span>{{ post.createdAt|localizedTimestamp }}</span>
         </small>
     </div>
 </div>

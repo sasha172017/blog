@@ -8,6 +8,7 @@ use App\Twig\BootstrapColorExtension;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
+use Faker\Factory;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
 class TagFixtures extends Fixture implements OrderedFixtureInterface
@@ -47,12 +48,14 @@ class TagFixtures extends Fixture implements OrderedFixtureInterface
 				$title = $item['faker']->country;
 				$time  = $item['faker']->unixTime;
 
+				$t = Factory::create();
+
 				$tag = (new Tag())
 					->setTitle($title)
 					->setSlug($this->slugger->slug($title))
 					->setColor(random_int(0, count(BootstrapColorExtension::COLORS_CLASS) - 1))
-					->setCreatedAt($time)
-					->setUpdatedAt($time);
+					->setCreatedAt($t->dateTime('now', 'UTC'))
+					->setUpdatedAt($t->dateTime());
 
 				$this->addReference('tag_' . $i . '_' . $item['locale'], $tag);
 

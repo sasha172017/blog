@@ -2,20 +2,43 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Core\Serializer\Filter\PropertyFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
 use App\Helpers\Timestamps;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
+
 
 /**
+ * @ApiResource(
+ *     normalizationContext={"groups"={"post:read"}},
+ *     denormalizationContext={"groups"={"post:write"}},
+ *     collectionOperations={
+ *         "get",
+ *         "post"={"security"="is_granted('ROLE_USER_CONFIRMED')"}
+ *     },
+ *     itemOperations={
+ *         "get",
+ *         "put"={"security"="is_granted('ROLE_USER_CONFIRMED') or object.getAuthor() == user"},
+ *         "delete"={"security"="is_granted('ROLE_USER_CONFIRMED') or object.getAuthor() == user"},
+ *     }
+ * )
+ * @ApiFilter(OrderFilter::class, properties={"author.nickname", "title", "slug", "summary", "views", "rating"})
+ * @ApiFilter(SearchFilter::class, properties={"views": "exact", "rating": "exact", "title": "partial", "slug" : "partial"})
+ * @ApiFilter(PropertyFilter::class)
  * @ORM\Entity(repositoryClass="App\Repository\PostRepository")
  * @ORM\HasLifecycleCallbacks
  */
 class Post
 {
-	use Timestamps {
-		onPreFlush as traitOnPreFlush;
-	}
+	use Timestamps;
 
 	/**
 	 * @ORM\Id()
@@ -25,32 +48,43 @@ class Post
 	private $id;
 
 	/**
+	 * @Groups({"post:read", "post:write"})
+	 * @Assert\NotBlank
 	 * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="posts")
 	 * @ORM\JoinColumn(nullable=false)
 	 */
 	private $author;
 
 	/**
+	 * @Groups({"post:read", "post:write"})
+	 * @Assert\NotBlank
 	 * @ORM\Column(type="string", length=100)
 	 */
 	private $title;
 
 	/**
+	 * @Groups({"post:read", "post:write"})
+	 * @Assert\NotBlank
 	 * @ORM\Column(type="string", length=150)
 	 */
 	private $slug;
 
 	/**
+	 * @Groups({"post:read", "post:write"})
+	 * @Assert\NotBlank
 	 * @ORM\Column(type="string", length=255)
 	 */
 	private $summary;
 
 	/**
+	 * @Groups({"post:write"})
+	 * @Assert\NotBlank
 	 * @ORM\Column(type="text")
 	 */
 	private $content;
 
 	/**
+	 * @Groups({"post:read", "post:write"})
 	 * @ORM\Column(type="integer", options={"default":0})
 	 */
 	private $views;
@@ -61,6 +95,8 @@ class Post
 	private $image;
 
 	/**
+	 * @Groups({"post:read", "post:write"})
+	 * @Assert\NotBlank
 	 * @ORM\ManyToMany(targetEntity="App\Entity\Tag", inversedBy="posts")
 	 * @ORM\OrderBy({"createdAt" = "DESC"})
 	 */
@@ -68,29 +104,67 @@ class Post
 
 	/**
 	 * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="post", orphanRemoval=true)
-	 * @ORM\OrderBy({"createdAt" = "DESC"})
+	 * @ORM\OrderBy({"updatedAt" = "DESC"})
 	 */
 	private $comments;
 
 	/**
+	 * @Groups({"post:read", "post:write"})
 	 * @ORM\Column(type="integer", options={"default":0}, nullable=true)
 	 */
 	private $ratingUp;
 
 	/**
+	 * @Groups({"post:read", "post:write"})
 	 * @ORM\Column(type="integer", options={"default":0}, nullable=true)
 	 */
 	private $ratingDown;
 
 	/**
+	 * @Groups({"post:read", "post:write"})
 	 * @ORM\Column(type="integer", options={"default":0}, nullable=true)
 	 */
 	private $rating;
 
 	/**
+	 * @Groups({"post:read", "post:write"})
 	 * @ORM\ManyToMany(targetEntity="App\Entity\User", mappedBy="bookmarks")
 	 */
 	private $users;
+
+	/**
+	 * @ORM\Column(type="integer")
+	 */
+	private $createdAt;
+
+	/**
+	 * @ORM\Column(type="integer")
+	 */
+	private $updatedAt;
+
+	public function getCreatedAt()
+	{
+		return $this->createdAt;
+	}
+
+	public function setCreatedAt(int $createdAt): self
+	{
+		$this->createdAt = $createdAt;
+
+		return $this;
+	}
+
+	public function getUpdatedAt()
+	{
+		return $this->updatedAt;
+	}
+
+	public function setUpdatedAt(int $updatedAt): self
+	{
+		$this->updatedAt = $updatedAt;
+
+		return $this;
+	}
 
 	public function __construct()
 	{

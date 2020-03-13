@@ -10,56 +10,19 @@ namespace App\Helpers;
 trait Timestamps
 {
 	/**
-	 * @ORM\Column(type="integer")
-	 */
-	private $createdAt;
-
-	/**
-	 * @ORM\Column(type="integer")
-	 */
-	private $updatedAt;
-
-	public function getCreatedAt()
-	{
-		return $this->createdAt;
-	}
-
-	public function setCreatedAt(int $createdAt): self
-	{
-		$this->createdAt = $createdAt;
-
-		return $this;
-	}
-
-	public function getUpdatedAt()
-	{
-		return $this->updatedAt;
-	}
-
-	public function setUpdatedAt(int $updatedAt): self
-	{
-		$this->updatedAt = $updatedAt;
-
-		return $this;
-	}
-
-	/**
 	 * @ORM\PrePersist
+	 * @ORM\PreUpdate
 	 */
-	public function onPrePersist(): void
+	public function timestamps(): void
 	{
-		if (empty($this->createdAt))
+		if ($this->getUpdatedAt() === null)
+		{
+			$this->setUpdatedAt((new \DateTime('now'))->getTimestamp());
+		}
+
+		if ($this->getCreatedAt() === null)
 		{
 			$this->setCreatedAt((new \DateTime('now'))->getTimestamp());
 		}
 	}
-
-	/**
-	 * @ORM\PreFlush
-	 */
-	public function onPreFlush(): void
-	{
-		$this->setUpdatedAt((new \DateTime('now'))->getTimestamp());
-	}
-
 }

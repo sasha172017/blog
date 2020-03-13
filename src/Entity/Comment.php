@@ -2,10 +2,14 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Helpers\Timestamps;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
+ * @ApiResource(
+ * )
  * @ORM\Entity(repositoryClass="App\Repository\CommentRepository")
  * @ORM\HasLifecycleCallbacks
  */
@@ -74,6 +78,40 @@ class Comment
 	public function setContent(string $content): self
 	{
 		$this->content = $content;
+
+		return $this;
+	}
+
+	/**
+	 * @ORM\Column(type="integer")
+	 */
+	private $createdAt;
+
+	/**
+	 * @ORM\Column(type="integer")
+	 */
+	private $updatedAt;
+
+	public function getCreatedAt()
+	{
+		return $this->createdAt;
+	}
+
+	public function setCreatedAt(int $createdAt): self
+	{
+		$this->createdAt = $createdAt;
+
+		return $this;
+	}
+
+	public function getUpdatedAt()
+	{
+		return $this->updatedAt;
+	}
+
+	public function setUpdatedAt(int $updatedAt): self
+	{
+		$this->updatedAt = $updatedAt;
 
 		return $this;
 	}

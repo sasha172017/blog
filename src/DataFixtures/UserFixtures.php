@@ -86,11 +86,11 @@ class UserFixtures extends Fixture implements OrderedFixtureInterface
 					->setCreatedAt($time)
 					->setUpdatedAt($time);
 
-				$avatar = $item['faker']->image($this->userAvatarsDirectory, 150, 150, null, false);
-				if ($avatar !== false)
-				{
-					$user->setAvatar($avatar);
-				}
+//				$avatar = $item['faker']->image($this->userAvatarsDirectory, 150, 150, null, false);
+//				if ($avatar !== false)
+//				{
+//					$user->setAvatar($avatar);
+//				}
 
 				$this->addReference('user_' . $i . '_' . $item['locale'], $user);
 
