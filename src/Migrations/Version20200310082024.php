@@ -27,9 +27,9 @@ final class Version20200310082024 extends AbstractMigration
         $this->addSql('CREATE TABLE tag (id INT AUTO_INCREMENT NOT NULL, title VARCHAR(50) NOT NULL, slug VARCHAR(100) NOT NULL, color INT DEFAULT 0 NOT NULL, created_at INT NOT NULL, updated_at INT NOT NULL, UNIQUE INDEX UNIQ_389B7832B36786B (title), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('ALTER TABLE post_tag ADD CONSTRAINT FK_5ACE3AF04B89032C FOREIGN KEY (post_id) REFERENCES post (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE post_tag ADD CONSTRAINT FK_5ACE3AF0BAD26311 FOREIGN KEY (tag_id) REFERENCES tag (id) ON DELETE CASCADE');
-        $this->addSql('DROP TABLE tag');
+//        $this->addSql('DROP TABLE tag');
         $this->addSql('DROP TABLE post_category');
-        $this->addSql('DROP INDEX fulltext_index ON post');
+//        $this->addSql('DROP INDEX fulltext_index ON post');
         $this->addSql('ALTER TABLE post CHANGE image image VARCHAR(50) DEFAULT NULL, CHANGE rating rating INT DEFAULT 0 NOT NULL');
         $this->addSql('ALTER TABLE user CHANGE roles roles JSON NOT NULL, CHANGE date_of_birth date_of_birth DATE DEFAULT NULL, CHANGE verification_token verification_token VARCHAR(150) DEFAULT NULL, CHANGE locale locale VARCHAR(10) DEFAULT NULL');
     }

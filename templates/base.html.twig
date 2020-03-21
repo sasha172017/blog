@@ -63,8 +63,7 @@
                         </ul>
 
                         {% if app.user %}
-                            <a href="{{ path('app_logout') }}" class="btn btn-outline-secondary btn-sm">({{ app.user.nickname }}
-                                ) {{ 'app.sign_out'|trans }}</a>
+                            <a href="{{ path('app_logout') }}" class="btn btn-outline-secondary btn-sm">({{ app.user.nickname }}) {{ 'app.sign_out'|trans }}</a>
                         {% else %}
                             <div class="btn-group btn-group-sm" role="group">
                                 <a href="{{ path('app_login') }}" class="btn btn-outline-info">{{ 'app.sign_in'|trans }}</a>
