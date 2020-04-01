@@ -49,3 +49,10 @@ services:
 
     App\Services\UrlRemember:
         arguments: ['%url_remember_default_route%']
+
+    my.oauth_aware.user_provider.service:
+        class: App\Security\EntityUserProvider
+        arguments:
+            - '@doctrine'
+            - App\Entity\User
+            - {github: githubId}

@@ -178,3 +178,10 @@ mark, .mark {
 .comment-content{
   word-break: break-all;
 }
+
+.github-auth{
+  color: black;
+  &:hover{
+    text-decoration: none;
+  }
+}

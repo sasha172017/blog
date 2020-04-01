@@ -1,0 +1,12 @@
+hwi_oauth:
+    # list of names of the firewalls in which this bundle is active, this setting MUST be set
+    firewall_names: [main]
+
+    # https://github.com/hwi/HWIOAuthBundle/blob/master/Resources/doc/2-configuring_resource_owners.md
+    resource_owners:
+        github:
+            type:                github
+            client_id:           'c357551f07b6a7abe2ec'
+            client_secret:       'c6a90e07bc5155c88d6244f3c6226d7119b84eee'
+            scope:               'user:email,public_repo'
+

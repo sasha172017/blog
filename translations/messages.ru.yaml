@@ -12,6 +12,7 @@ app:
   registration: 'Регистрация'
   new_user: 'Регистраниця нового пользователя'
   auth:
+    with: 'Войти с помощью'
     edit_profile: 'Редактированиее учетной записи'
     email: 'Email'
     nickname: 'Nickname'

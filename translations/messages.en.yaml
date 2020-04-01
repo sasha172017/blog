@@ -12,6 +12,7 @@ app:
   registration: 'Registration'
   new_user: 'New User Registration'
   auth:
+    with: 'Login with'
     edit_profile: 'Edit profile'
     email: 'Email'
     nickname: 'Nickname'

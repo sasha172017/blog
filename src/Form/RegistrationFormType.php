@@ -44,7 +44,7 @@ class RegistrationFormType extends AbstractType
 			])
 			->add('locale', ChoiceType::class, [
 				'label_format' => 'app.auth.locale',
-				'choices' => array_flip($this->locales),
+				'choices'      => array_flip($this->locales),
 			])
 			->add('avatar', FileType::class, [
 				'label'       => 'app.auth.avatar',
@@ -71,18 +71,18 @@ class RegistrationFormType extends AbstractType
 			])
 			->add('dateOfBirth', DateType::class, [
 				'label_format' => 'app.auth.date_of_birth',
-				'years' => range($year - 100, $year - 6)
+				'years'        => range($year - 100, $year - 6)
 			])
 			->add('plainPassword', RepeatedType::class, [
-				'type'        => PasswordType::class,
+				'type'           => PasswordType::class,
 				'first_options'  => ['label' => 'app.auth.password'],
 				'second_options' => ['label' => 'app.auth.repeat_password'],
-				'mapped'      => false,
-				'constraints' => [
-
+				'mapped'         => false,
+				'required'       => true,
+				'constraints'    => [
 					new Length([
-						'min'        => 6,
-						'max'        => 4096,
+						'min' => 6,
+						'max' => 4096,
 					]),
 				],
 			]);

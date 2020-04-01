@@ -44,7 +44,7 @@ class User implements UserInterface
 
 	/**
 	 * @var string The hashed password
-	 * @ORM\Column(type="string")
+	 * @ORM\Column(type="string", nullable=true)
 	 */
 	private $password;
 
@@ -77,7 +77,7 @@ class User implements UserInterface
 	/**
 	 * @ORM\Column(type="integer", options={"default":0})
 	 */
-	private $color;
+	private $color = 0;
 
 	/**
 	 * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="author", orphanRemoval=true)
@@ -109,6 +109,16 @@ class User implements UserInterface
 	 * @ORM\Column(type="integer")
 	 */
 	private $updatedAt;
+
+	/**
+	 * @ORM\Column(type="string", length=50, nullable=true)
+	 */
+	private $githubId;
+
+	/**
+	 * @ORM\Column(type="string", length=255, nullable=true)
+	 */
+	private $githubAccessToken;
 
 	public function getCreatedAt()
 	{
@@ -396,6 +406,30 @@ class User implements UserInterface
 	public function setAvatar(?string $avatar): self
 	{
 		$this->avatar = $avatar;
+
+		return $this;
+	}
+
+	public function getGithubId(): ?string
+	{
+		return $this->githubId;
+	}
+
+	public function setGithubId(?string $githubId): self
+	{
+		$this->githubId = $githubId;
+
+		return $this;
+	}
+
+	public function getGithubAccessToken(): ?string
+	{
+		return $this->githubAccessToken;
+	}
+
+	public function setGithubAccessToken(?string $githubAccessToken): self
+	{
+		$this->githubAccessToken = $githubAccessToken;
 
 		return $this;
 	}

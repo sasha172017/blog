@@ -19,6 +19,10 @@
                 </div>
             {% endif %}
 
+            <a class="github-auth d-flex align-items-center justify-content-center mb-3 mx-auto" href="{{ path('hwi_oauth_service_redirect', {'service': 'github' }) }}">
+                <span class="pr-2">{{ 'app.auth.with'|trans }}</span>
+                <i class="fab fa-github fa-3x"></i>
+            </a>
 
             <label for="inputEmail">{{'app.auth.email'|trans}}</label>
             <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" required autofocus>
@@ -39,6 +43,9 @@
                     </label>
                 </div>
             #}
+
+
+
         </div>
 
         <div class="card-footer text-center">
