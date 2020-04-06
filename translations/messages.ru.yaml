@@ -99,7 +99,19 @@ post:
   search: 'Поиск'
 
 tag:
+  create_new: 'Добавление тега'
   title: 'Теги'
+  new: 'Новый тег'
+  form:
+    title: 'Навзание'
+    slug: 'Slug'
+  messages:
+    danger:
+      empty: 'Ошибка! Сначала нужно отвязать публикации от тега <b>{name}</b>'
+    success:
+      added: 'Тег <b>{name}</b> добавлен!'
+      deleted: 'Тег <b>{name}</b> удален!'
+      edit: 'Тег <b>{name}</b> отредактирован!'
 
 comment:
   post: 'Публикация'
