@@ -3,15 +3,20 @@
 namespace App\Controller;
 
 use App\Entity\Tag;
+use App\Form\TagType;
 use App\Repository\TagRepository;
 use App\Repository\PostRepository;
 use App\Services\PostPagination;
 use App\Services\PostPaginationSortQuery;
 use App\Services\UrlRemember;
+use App\Twig\BootstrapColorExtension;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Class TagController
@@ -93,6 +98,103 @@ class TagController extends AbstractController
 			'pagination' => $paginator,
 			'tag'   => $tag
 		]);
+	}
+
+	/**
+	 * @Route("/new", name="tag_new", methods={"GET","POST"})
+	 * @IsGranted("ROLE_ADMIN")
+	 * @param Request             $request
+	 * @param SluggerInterface    $slugger
+	 *
+	 * @param TranslatorInterface $translator
+	 *
+	 * @return Response
+	 * @throws \Exception
+	 */
+	public function new(Request $request, SluggerInterface $slugger, TranslatorInterface $translator): Response
+	{
+		$tag = new Tag();
+		$form = $this->createForm(TagType::class, $tag);
+		$form->handleRequest($request);
+
+		if ($form->isSubmitted() && $form->isValid()) {
+
+			$tag->setSlug($slugger->slug($form->getData()->getTitle()))
+				->setColor(random_int(0, count(BootstrapColorExtension::COLORS_CLASS) - 1));
+
+			$entityManager = $this->getDoctrine()->getManager();
+			$entityManager->persist($tag);
+			$entityManager->flush();
+
+			$this->addFlash('success', $translator->trans('tag.messages.success.added', ['{name}' => $tag->getTitle()]));
+
+			return $this->redirectToRoute('blog_index');
+		}
+
+		return $this->render('tag/new.html.twig', [
+			'tag' => $tag,
+			'form' => $form->createView(),
+		]);
+	}
+
+	/**
+	 * @Route("/{slug}/edit", name="tag_edit", methods={"GET","POST"})
+	 * @IsGranted("ROLE_ADMIN")
+	 * @param Request             $request
+	 * @param Tag                 $tag
+	 * @param SluggerInterface    $slugger
+	 * @param TranslatorInterface $translator
+	 *
+	 * @return Response
+	 * @throws \Exception
+	 */
+	public function edit(Request $request, Tag $tag, SluggerInterface $slugger, TranslatorInterface $translator): Response
+	{
+		$form = $this->createForm(TagType::class, $tag);
+		$form->handleRequest($request);
+
+		if ($form->isSubmitted() && $form->isValid()) {
+
+			$tag->setSlug($slugger->slug($form->getData()->getTitle()))
+				->setColor(random_int(0, count(BootstrapColorExtension::COLORS_CLASS) - 1));
+
+			$this->getDoctrine()->getManager()->flush();
+
+			$this->addFlash('success', $translator->trans('tag.messages.success.edit', ['{name}' => $tag->getTitle()]));
+
+			return $this->redirectToRoute('blog_index');
+		}
+
+		return $this->render('tag/edit.html.twig', [
+			'tag' => $tag,
+			'form' => $form->createView(),
+		]);
+	}
+
+	/**
+	 * @Route("/{id}", name="tag_delete", methods={"GET"})
+	 * @IsGranted("ROLE_ADMIN")
+	 * @param Tag                 $tag
+	 *
+	 * @param TranslatorInterface $translator
+	 *
+	 * @return Response
+	 */
+	public function delete(Tag $tag, TranslatorInterface $translator): Response
+	{
+		if (!empty($tag->getPosts()))
+		{
+			$this->addFlash('danger', $translator->trans('tag.messages.danger.empty', ['{name}' => $tag->getTitle()]));
+			return $this->redirectToRoute('tag_posts', ['slug' => $tag->getSlug()]);
+		}
+
+		$entityManager = $this->getDoctrine()->getManager();
+		$entityManager->remove($tag);
+		$entityManager->flush();
+
+		$this->addFlash('success', $translator->trans('tag.messages.success.deleted', ['{name}' => $tag->getTitle()]));
+
+		return $this->redirectToRoute('blog_index');
 	}
 
 }

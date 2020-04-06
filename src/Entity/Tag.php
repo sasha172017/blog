@@ -60,7 +60,6 @@ class Tag
 
 	/**
 	 * @Groups({"tag:read", "tag:write"})
-	 * @Assert\NotBlank
 	 * @ORM\Column(type="string", length=100)
 	 */
 	private $slug;
@@ -85,7 +84,6 @@ class Tag
 
 	/**
 	 * @Groups({"tag:read", "tag:write"})
-	 * @Assert\NotBlank
 	 * @ORM\Column(type="datetime")
 	 */
 	private $updatedAt;
@@ -193,17 +191,18 @@ class Tag
 	/**
 	 * @ORM\PrePersist
 	 * @ORM\PreUpdate
+	 * @throws \Exception
 	 */
 	public function updatedTimestamps(): void
 	{
 		if ($this->getUpdatedAt() === null)
 		{
-			$this->setUpdatedAt(new \DateTime('now', 'UTC'));
+			$this->setUpdatedAt(new \DateTime('now', new \DateTimeZone('UTC')));
 		}
 
 		if ($this->getCreatedAt() === null)
 		{
-			$this->setCreatedAt(new \DateTime('now', 'UTC'));
+			$this->setCreatedAt(new \DateTime('now', new \DateTimeZone('UTC')));
 		}
 	}
 }

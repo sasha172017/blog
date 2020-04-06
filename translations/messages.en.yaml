@@ -74,7 +74,7 @@ post:
       edit: 'Authors can only edit this post!'
 
     success:
-      added: 'Post <b>%s</b> added!'
+      added: 'Post <b>{name}</b> added!'
       deleted: 'Post <b>%s</b> deleted!'
       edit: 'Post <b>%s</b> edited!'
 
@@ -99,7 +99,19 @@ post:
   search: 'Search'
 
 tag:
+  create_new: 'Create new tag'
   title: 'Tags'
+  new: 'Add new tag'
+  form:
+    title: 'Title'
+    slug: 'Slug'
+  messages:
+    danger:
+      empty: 'Tag <b>{name}</b> is not empty! First you need to delete the articles with the tag <b>{name}</b>!'
+    success:
+      added: 'Tag <b>{name}</b> added!'
+      deleted: 'Tag <b>{name}</b> deleted!'
+      edit: 'Tag <b>{name}</b> edited!'
 
 comment:
   post: 'Post'

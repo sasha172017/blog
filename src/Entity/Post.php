@@ -49,7 +49,6 @@ class Post
 
 	/**
 	 * @Groups({"post:read", "post:write"})
-	 * @Assert\NotBlank
 	 * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="posts")
 	 * @ORM\JoinColumn(nullable=false)
 	 */
@@ -64,7 +63,6 @@ class Post
 
 	/**
 	 * @Groups({"post:read", "post:write"})
-	 * @Assert\NotBlank
 	 * @ORM\Column(type="string", length=150)
 	 */
 	private $slug;
