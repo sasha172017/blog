@@ -8,5 +8,5 @@ hwi_oauth:
             type:                github
             client_id:           'c357551f07b6a7abe2ec'
             client_secret:       'c6a90e07bc5155c88d6244f3c6226d7119b84eee'
-            scope:               'user:email,public_repo'
+            scope:               'user:email'
 

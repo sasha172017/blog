@@ -41,13 +41,15 @@ security:
                 # where to redirect after logout
                 # target: app_any_route
 
+
             oauth:
                 resource_owners:
                     github:          "/login/check-github"
                 login_path:        /login
                 use_forward:       false
-                failure_path:      /login
-                #default_target_path: /
+                failure_handler:   social_authentication_failure_handler
+                success_handler:   social_authentication_success_handler
+                default_target_path: "/continue-register"
 
                 oauth_user_provider:
                     service: my.oauth_aware.user_provider.service
@@ -61,4 +63,5 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
+        - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
 #        - { path: ^/api/tags, roles: ROLE_USER }

@@ -9,6 +9,9 @@
         </div>
 
         <div class="card-body">
+
+            {{ include('default/_flash_messages.html.twig') }}
+
             {% if error %}
                 <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
             {% endif %}

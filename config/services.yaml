@@ -51,8 +51,16 @@ services:
         arguments: ['%url_remember_default_route%']
 
     my.oauth_aware.user_provider.service:
-        class: App\Security\EntityUserProvider
+        class: App\Security\GitHubEntityUserProvider
         arguments:
             - '@doctrine'
+            - '@validator'
+            - '@router'
+            - '@session'
             - App\Entity\User
             - {github: githubId}
+
+    social_authentication_failure_handler:
+        class: App\Security\Handler\SocialAuthenticationFailureHandler
+    social_authentication_success_handler:
+        class: App\Security\Handler\SocialAuthenticationSuccessHandler

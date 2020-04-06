@@ -13,7 +13,7 @@ app:
   new_user: 'Регистраниця нового пользователя'
   auth:
     with: 'Войти с помощью'
-    edit_profile: 'Редактированиее учетной записи'
+    edit_profile: 'Редактирование учетной записи'
     email: 'Email'
     nickname: 'Nickname'
     locale: 'Язык'

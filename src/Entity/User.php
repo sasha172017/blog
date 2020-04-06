@@ -24,6 +24,7 @@ class User implements UserInterface
 
 	public const ROLE_ADMIN = 'ROLE_ADMIN';
 	public const ROLE_USER_CONFIRMED = 'ROLE_USER_CONFIRMED';
+	public const ROLE_SOCIAL_USER = 'ROLE_SOCIAL_USER';
 
 	/**
 	 * @ORM\Id()

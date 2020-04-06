@@ -2,7 +2,7 @@
     <div class="messages">
         {% for type, messages in app.flashes %}
             {% for message in messages %}
-                <div class="mb-0 mt-4 alert alert-dismissible alert-{{ type }} fade show" role="alert">
+                <div class="mb-2 mt-4 alert alert-dismissible alert-{{ type }} fade show" role="alert">
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>

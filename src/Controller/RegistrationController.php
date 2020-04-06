@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\RegistrationFormType;
+use App\Form\SocialRegistrationFormType;
 use App\Repository\UserRepository;
 use App\Security\LoginFormAuthenticator;
 use App\Services\ConfirmationEmail;
@@ -14,6 +15,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -38,7 +40,7 @@ class RegistrationController extends AbstractController
 	 * @throws TransportExceptionInterface
 	 * @throws Exception
 	 */
-	public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder, GuardAuthenticatorHandler $guardHandler, LoginFormAuthenticator $authenticator, TokenGeneratorInterface $generator, ConfirmationEmail $email, FileUploader $fileUploader, string $userAvatarsDirectory): Response
+	public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder, GuardAuthenticatorHandler $guardHandler, LoginFormAuthenticator $authenticator, TokenGeneratorInterface $generator, ConfirmationEmail $email, FileUploader $fileUploader): Response
 	{
 		$user = new User();
 		$form = $this->createForm(RegistrationFormType::class, $user);
@@ -70,7 +72,7 @@ class RegistrationController extends AbstractController
 			$entityManager->flush();
 
 			// confirmation account
-			$email->send($user);
+			$email->send($user);    
 
 			return $guardHandler->authenticateUserAndHandleSuccess(
 				$user,
@@ -140,6 +142,55 @@ class RegistrationController extends AbstractController
 		}
 
 		return $this->redirectToRoute('blog_index');
+	}
+
+	/**
+	 * @Route("/continue-register", name="app_social_register")
+	 * @param Request                   $request
+	 * @param SessionInterface          $session
+	 * @param GuardAuthenticatorHandler $guardHandler
+	 * @param LoginFormAuthenticator    $authenticator
+	 * @param FileUploader              $fileUploader
+	 *
+	 * @return Response
+	 * @throws Exception
+	 */
+	public function continueRegister(Request $request, SessionInterface $session, GuardAuthenticatorHandler $guardHandler, LoginFormAuthenticator $authenticator, FileUploader $fileUploader)
+	{
+		$user = $this->getUser();
+
+		$form = $this->createForm(SocialRegistrationFormType::class, $user);
+		$form->handleRequest($request);
+
+		if ($form->isSubmitted() && $form->isValid())
+		{
+			$avatar = $form->get('avatar')->getData();
+			if ($avatar)
+			{
+				$imageFileName = $fileUploader->upload($avatar, 'user_avatars_directory');
+				$user->setAvatar($imageFileName);
+			}
+
+			$user->setColor(random_int(0, count(BootstrapColorExtension::COLORS_CLASS) - 1));
+			$user->setRoles(array_merge($user->getRoles(), [User::ROLE_SOCIAL_USER]));
+
+			$entityManager = $this->getDoctrine()->getManager();
+			$entityManager->persist($user);
+			$entityManager->flush();
+
+			$session->remove('social_github');
+
+			return $guardHandler->authenticateUserAndHandleSuccess(
+				$user,
+				$request,
+				$authenticator,
+				'main'
+			);
+		}
+
+		return $this->render('registration/register.html.twig', [
+			'registrationForm' => $form->createView(),
+		]);
 	}
 
 }
