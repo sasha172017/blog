@@ -34,3 +34,5 @@ yarn-error.log
 
 /public/uploads/avatars/
 /public/uploads/posts/
+
+docker-compose.yml

@@ -6,7 +6,7 @@
 parameters:
     locale: 'en'
     app_locales: en|ru
-    factory_locales: ['en_US','ru_RU']
+    factory_locales: ['en_US', 'ru_RU']
 
     date_time_format: 'd MMMM YYYY, h:m'
 

@@ -36,7 +36,7 @@
                     <i class="fas fa-cogs"></i> {{ 'app.auth.profile'|trans }}
                 </a>
 
-                {% if post is defined and is_author(post) %}
+                {% if post is defined and (is_author(post) or is_granted(constant('app\\Entity\\User::ROLE_ADMIN'))) %}
                     <a href="{{ path('post_edit', {slug : post.slug}) }}" class="btn btn-primary btn-sm my-1"><i class="far fa-edit"></i>
                         {{ 'app.edit'|trans }}</a>
                     {{ include('post/_delete_form.html.twig', {post: post}, with_context = false) }}
