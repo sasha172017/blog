@@ -6,7 +6,7 @@ hwi_oauth:
     resource_owners:
         github:
             type:                github
-            client_id:           'c357551f07b6a7abe2ec'
-            client_secret:       'c6a90e07bc5155c88d6244f3c6226d7119b84eee'
+            client_id:           '%env(GITHUB_ID)%'
+            client_secret:       '%env(GITHUB_SECRET)%'
             scope:               'user:email'
 

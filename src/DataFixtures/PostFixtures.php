@@ -71,11 +71,11 @@ class PostFixtures extends Fixture implements OrderedFixtureInterface
 					->setUpdatedAt($time);
 
 
-//				$image = $item['faker']->image($this->postImagesDirectory, 750, 300, null, false);
-//				if ($image !== false)
-//				{
-//					$post->setImage($image);
-//				}
+				$image = $item['faker']->image($this->postImagesDirectory, 750, 300, null, false);
+				if ($image !== false)
+				{
+					$post->setImage($image);
+				}
 
 				$this->addReference('post_' . $i . '_' . $item['locale'], $post);
 
