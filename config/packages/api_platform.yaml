@@ -1,14 +1,18 @@
 api_platform:
-    title: 'Blog API'
-    version: '1.0.0'
-    show_webby: true
-    mapping:
-        paths: ['%kernel.project_dir%/config/api_platform/resources']
-    patch_formats:
-        json: ['application/merge-patch+json']
-    swagger:
-        versions: [3]
-        api_keys:
-            apiKey:
-                name: Authorization
-                type: header
+  collection:
+    pagination:
+      items_per_page: 5
+  title: 'Blog API'
+  version: '1.0.0'
+  show_webby: true
+  mapping:
+    #paths: ['%kernel.project_dir%/config/api_platform/resources']
+    paths: ['%kernel.project_dir%/src/Entity']
+  patch_formats:
+    json: ['application/merge-patch+json']
+  swagger:
+    versions: [3]
+    api_keys:
+      apiKey:
+        name: Authorization
+        type: header

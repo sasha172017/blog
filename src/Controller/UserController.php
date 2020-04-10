@@ -4,9 +4,14 @@ namespace App\Controller;
 
 use App\Entity\Post;
 use App\Entity\User;
+use App\Form\UserFormType;
 use App\Repository\PostRepository;
-use App\Repository\UserRepository;
 use App\Security\Voter\BookmarksVoter;
+use App\Security\Voter\UserVoter;
+use App\Services\FileUploader;
+use App\Services\PostPagination;
+use App\Services\PostPaginationSortQuery;
+use App\Services\UrlRemember;
 use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -14,6 +19,8 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Class UserController
@@ -24,61 +31,70 @@ class UserController extends AbstractController
 {
 	/**
 	 * @Route("/{nickname}/posts", name="user_posts", methods={"GET"})
-	 * @param User               $user
-	 *
-	 * @param Request            $request
-	 * @param PostRepository     $postRepository
-	 * @param PaginatorInterface $paginator
+	 * @param Request                 $request
+	 * @param UrlRemember             $urlRemember
+	 * @param User                    $user *
+	 * @param PostPagination          $pagination
+	 * @param PostPaginationSortQuery $paginationSortQuery
 	 *
 	 * @return Response
 	 */
-	public function posts(User $user, Request $request, PostRepository $postRepository, PaginatorInterface $paginator): Response
+	public function posts(Request $request, UrlRemember $urlRemember, User $user, PostPagination $pagination, PostPaginationSortQuery $paginationSortQuery): Response
 	{
-		$pagination = $paginator->paginate(
-			$postRepository->userPosts($user->getId()),
-			$request->query->getInt('page', 1),
-			PostController::LIMIT_PER_PAGE
-		);
+		$urlRemember->remember();
+
+		$paginator = $pagination->pagination($paginationSortQuery->user($user->getId()));
+
+		if ($request->isXmlHttpRequest())
+		{
+			return $this->render('post/_items.html.twig', ['pagination' => $paginator]);
+		}
 
 		return $this->render('user/posts.html.twig', [
-			'pagination' => $pagination,
+			'pagination' => $paginator,
 			'user'       => $user
 		]);
 	}
 
 	/**
 	 * @Route("/{nickname}/bookmarks", name="user_bookmarks", methods={"GET"})
-	 * @param User               $user
-	 * @param Request            $request
-	 * @param PostRepository     $postRepository
-	 * @param PaginatorInterface $paginator
+	 * @param UrlRemember             $urlRemember
+	 * @param User                    $user
+	 * @param Request                 $request
+	 * @param PostPagination          $pagination
+	 * @param PostPaginationSortQuery $paginationSortQuery
 	 *
 	 * @return Response
 	 */
-	public function bookmarks(User $user, Request $request, PostRepository $postRepository, PaginatorInterface $paginator): Response
+	public function bookmarks(UrlRemember $urlRemember, User $user, Request $request, PostPagination $pagination, PostPaginationSortQuery $paginationSortQuery): Response
 	{
 		$this->denyAccessUnlessGranted(BookmarksVoter::SHOW, $user, 'Authors can only see bookmarks!');
 
-		$pagination = $paginator->paginate(
-			$postRepository->userBookmarks($user->getId()),
-			$request->query->getInt('page', 1),
-			PostController::LIMIT_PER_PAGE
-		);
+		$urlRemember->remember();
+
+		$paginator = $pagination->pagination($paginationSortQuery->userBookmarks($user->getId()));
+
+		if ($request->isXmlHttpRequest())
+		{
+			return $this->render('post/_items.html.twig', ['pagination' => $paginator]);
+		}
 
 		return $this->render('user/bookmarks.html.twig', [
-			'pagination' => $pagination,
+			'pagination' => $paginator,
 			'user'       => $user,
 		]);
 	}
 
 	/**
-	 * @Route("/add-to-bookmark/{slug}", name="user_add_to_bookmark", methods={"GET"})
+	 * @Route("/add-to-bookmarks/{slug}", name="user_add_to_bookmarks", methods={"GET"})
 	 * @IsGranted("ROLE_USER")
-	 * @param Post $post
+	 * @param UrlRemember         $urlRemember
+	 * @param Post                $post
+	 * @param TranslatorInterface $translator
 	 *
 	 * @return RedirectResponse
 	 */
-	public function addToBookmark(Post $post): RedirectResponse
+	public function addToBookmarks(UrlRemember $urlRemember, Post $post, TranslatorInterface $translator): RedirectResponse
 	{
 		$user = $this->getUser();
 
@@ -92,19 +108,20 @@ class UserController extends AbstractController
 		$entityManager->persist($user);
 		$entityManager->flush();
 
-		$this->addFlash('success', sprintf('Post <b>%s</b> added to bookmark!', $post->getTitle()));
+		$this->addFlash('success', sprintf($translator->trans('post.bookmarks.messages.add'), $post->getTitle()));
 
-		return $this->redirectToRoute('blog_index');
-
+		return $this->redirect($urlRemember->previous());
 	}
 
 	/**
 	 * @Route("/remove-from-bookrmaks/{slug}", name="user_remove_from_bookmarks", methods={"GET"})
-	 * @param Post $post
+	 * @param UrlRemember         $urlRemember
+	 * @param Post                $post *
+	 * @param TranslatorInterface $translator
 	 *
 	 * @return RedirectResponse
 	 */
-	public function removeFromBookmarks(Post $post): RedirectResponse
+	public function removeFromBookmarks(UrlRemember $urlRemember, Post $post, TranslatorInterface $translator): RedirectResponse
 	{
 		$user = $this->getUser();
 
@@ -118,9 +135,127 @@ class UserController extends AbstractController
 		$entityManager->persist($user);
 		$entityManager->flush();
 
-		$this->addFlash('success', sprintf('Post <b>%s</b> removed from bookmarks!', $post->getTitle()));
+		$this->addFlash('success', sprintf($translator->trans('post.bookmarks.messages.delete'), $post->getTitle()));
 
-		return $this->redirectToRoute('blog_index');
+		return $this->redirect($urlRemember->previous());
+	}
+
+	/**
+	 * @Route("/{nickname}/posts/search", name="user_posts_search", methods={"GET"})
+	 * @param Request                 $request
+	 * @param User                    $user
+	 * @param UrlRemember             $urlRemember
+	 * @param PostPagination          $pagination
+	 * @param PostRepository          $postRepository
+	 *
+	 * @param PostPaginationSortQuery $paginationSortQuery
+	 *
+	 * @return Response
+	 */
+	public function search(Request $request, User $user, UrlRemember $urlRemember, PostPagination $pagination, PostRepository $postRepository, PostPaginationSortQuery $paginationSortQuery): Response
+	{
+		$urlRemember->remember();
+
+		if (!empty($request->get('q')))
+		{
+			$query = $postRepository->searchWithUser($request->get('q'), $user->getId());
+		}
+
+		$paginator = $pagination->pagination($query ?? $paginationSortQuery->user($user->getId()));
+
+		if ($request->isXmlHttpRequest())
+		{
+			return $this->render('post/_items.html.twig', ['pagination' => $paginator]);
+		}
+
+		return $this->render('user/posts.html.twig', [
+			'pagination' => $paginator,
+			'user'       => $user
+		]);
+	}
+
+	/**
+	 * @Route("/{nickname}/bookrmaks/search", name="user_bookmarks_posts_search", methods={"GET"})
+	 * @param Request                 $request
+	 * @param User                    $user
+	 * @param UrlRemember             $urlRemember
+	 * @param PostPagination          $pagination
+	 * @param PostRepository          $postRepository
+	 *
+	 * @param PostPaginationSortQuery $paginationSortQuery
+	 *
+	 * @return Response
+	 */
+	public function searchBookmarks(Request $request, User $user, UrlRemember $urlRemember, PostPagination $pagination, PostRepository $postRepository, PostPaginationSortQuery $paginationSortQuery): Response
+	{
+		$this->denyAccessUnlessGranted(BookmarksVoter::SHOW, $user, 'Authors can only see bookmarks!');
+
+		$urlRemember->remember();
+
+		if (!empty($request->get('q')))
+		{
+			$query = $postRepository->searchInBookmarks($request->get('q'), $user->getId());
+		}
+
+		$paginator = $pagination->pagination($query ?? $paginationSortQuery->userBookmarks($user->getId()));
+
+		if ($request->isXmlHttpRequest())
+		{
+			return $this->render('post/_items.html.twig', ['pagination' => $paginator]);
+		}
+
+		return $this->render('user/bookmarks.html.twig', [
+			'pagination' => $paginator,
+			'user'       => $user
+		]);
+	}
+
+	/**
+	 * @Route("/{nickname}/edit", name="user_edit", methods={"GET", "POST"})
+	 * @param Request             $request
+	 * @param User                $user
+	 * @param FileUploader        $fileUploader
+	 * @param TranslatorInterface $translator
+	 *
+	 * @return RedirectResponse|Response
+	 */
+	public function edit(Request $request, User $user, FileUploader $fileUploader, TranslatorInterface $translator, UserPasswordEncoderInterface $passwordEncoder)
+	{
+		$this->denyAccessUnlessGranted(UserVoter::EDIT, $user, 'Access denied');
+
+		$form = $this->createForm(UserFormType::class, $user);
+		$form->handleRequest($request);
+
+		if ($form->isSubmitted() && $form->isValid())
+		{
+
+			$password = $form->get('plainPassword')->getData();
+
+			if (!empty($password))
+			{
+				$user->setPassword($passwordEncoder->encodePassword($user, $password));
+			}
+
+			$avatar = $form->get('avatar')->getData();
+			if ($avatar)
+			{
+				$imageFileName = $fileUploader->upload($avatar, 'user_avatars_directory');
+				@unlink($this->getParameter('user_avatars_directory') . '/' . $user->getAvatar());
+				$user->setAvatar($imageFileName);
+			}
+
+			$this->getDoctrine()->getManager()->flush();
+
+			$this->addFlash('success', $translator->trans('app.auth.messages.success.edit'));
+
+			return $this->redirectToRoute('blog_index');
+		}
+
+		return $this->render('user/edit.html.twig', [
+			'user' => $user,
+			'form' => $form->createView(),
+		]);
+
 	}
 
 }

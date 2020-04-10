@@ -1,0 +1,4 @@
+user:
+  unique:
+    email: 'There is already an account with this email'
+    nickname: 'There is already an account with this nickname'

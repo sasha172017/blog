@@ -1,0 +1,8 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{'tag.new'|trans}}{% endblock %}
+
+{% block main %}
+    {{ include('tag/_form.html.twig', {'header': 'tag.create_new'|trans}) }}
+{% endblock %}
+

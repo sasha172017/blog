@@ -2,18 +2,20 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Helpers\Timestamps;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
+ * @ApiResource
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
- * @UniqueEntity(fields={"email"}, message="There is already an account with this email")
- * @UniqueEntity(fields={"nickname"}, message="There is already an account with this nickname")
- * @UniqueEntity(fields={"token"}, message="TOKEN already exists")
+ * @UniqueEntity(fields={"email"}, message="user.unique.email")
+ * @UniqueEntity(fields={"nickname"}, message="user.unique.nickname")
  * @ORM\HasLifecycleCallbacks
  */
 class User implements UserInterface
@@ -22,6 +24,7 @@ class User implements UserInterface
 
 	public const ROLE_ADMIN = 'ROLE_ADMIN';
 	public const ROLE_USER_CONFIRMED = 'ROLE_USER_CONFIRMED';
+	public const ROLE_SOCIAL_USER = 'ROLE_SOCIAL_USER';
 
 	/**
 	 * @ORM\Id()
@@ -42,7 +45,7 @@ class User implements UserInterface
 
 	/**
 	 * @var string The hashed password
-	 * @ORM\Column(type="string")
+	 * @ORM\Column(type="string", nullable=true)
 	 */
 	private $password;
 
@@ -75,7 +78,7 @@ class User implements UserInterface
 	/**
 	 * @ORM\Column(type="integer", options={"default":0})
 	 */
-	private $color;
+	private $color = 0;
 
 	/**
 	 * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="author", orphanRemoval=true)
@@ -84,14 +87,63 @@ class User implements UserInterface
 	private $comments;
 
 	/**
-	 * @ORM\Column(type="string", length=255, nullable=true, unique=true)
-	 */
-	private $apiToken;
-
-	/**
 	 * @ORM\ManyToMany(targetEntity="App\Entity\Post", inversedBy="users")
 	 */
 	private $bookmarks;
+
+	/**
+	 * @ORM\Column(type="string", length=10, nullable=true)
+	 */
+	private $locale;
+
+	/**
+	 * @ORM\Column(type="string", length=50, nullable=true)
+	 */
+	private $avatar;
+
+	/**
+	 * @ORM\Column(type="integer")
+	 */
+	private $createdAt;
+
+	/**
+	 * @ORM\Column(type="integer")
+	 */
+	private $updatedAt;
+
+	/**
+	 * @ORM\Column(type="string", length=50, nullable=true)
+	 */
+	private $githubId;
+
+	/**
+	 * @ORM\Column(type="string", length=255, nullable=true)
+	 */
+	private $githubAccessToken;
+
+	public function getCreatedAt()
+	{
+		return $this->createdAt;
+	}
+
+	public function setCreatedAt(int $createdAt): self
+	{
+		$this->createdAt = $createdAt;
+
+		return $this;
+	}
+
+	public function getUpdatedAt()
+	{
+		return $this->updatedAt;
+	}
+
+	public function setUpdatedAt(int $updatedAt): self
+	{
+		$this->updatedAt = $updatedAt;
+
+		return $this;
+	}
 
 	public function __construct()
 	{
@@ -307,18 +359,6 @@ class User implements UserInterface
 		return $this;
 	}
 
-	public function getApiToken(): ?string
-	{
-		return $this->apiToken;
-	}
-
-	public function setApiToken(?string $apiToken): self
-	{
-		$this->apiToken = $apiToken;
-
-		return $this;
-	}
-
 	/**
 	 * @return Collection|Post[]
 	 */
@@ -343,6 +383,54 @@ class User implements UserInterface
 		{
 			$this->bookmarks->removeElement($bookmark);
 		}
+
+		return $this;
+	}
+
+	public function getLocale(): ?string
+	{
+		return $this->locale;
+	}
+
+	public function setLocale(string $locale): self
+	{
+		$this->locale = $locale;
+
+		return $this;
+	}
+
+	public function getAvatar(): ?string
+	{
+		return $this->avatar;
+	}
+
+	public function setAvatar(?string $avatar): self
+	{
+		$this->avatar = $avatar;
+
+		return $this;
+	}
+
+	public function getGithubId(): ?string
+	{
+		return $this->githubId;
+	}
+
+	public function setGithubId(?string $githubId): self
+	{
+		$this->githubId = $githubId;
+
+		return $this;
+	}
+
+	public function getGithubAccessToken(): ?string
+	{
+		return $this->githubAccessToken;
+	}
+
+	public function setGithubAccessToken(?string $githubAccessToken): self
+	{
+		$this->githubAccessToken = $githubAccessToken;
 
 		return $this;
 	}

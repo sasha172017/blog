@@ -22,12 +22,14 @@ class CommentType extends AbstractType
 			    ->add('post', EntityType::class, [
 				    'class'        => Post::class,
 				    'choice_label' => 'title',
-				    'disabled'     => true
+				    'disabled'     => true,
+				    'label_format' => 'comment.post'
 			    ]);
 	    }
 
 	    $builder
 		    ->add('content', TextareaType::class, [
+			    'label_format' => 'post.form.content',
 			    'attr' => [
 				    'rows'  => 3
 			    ]

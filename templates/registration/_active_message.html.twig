@@ -1,5 +1,5 @@
-{% if app.user and not app.user.active %}
+{% if app.user and not is_granted(constant('app\\Entity\\User::ROLE_USER_CONFIRMED')) %}
     <div class="mb-0 mt-4 alert alert-warning alert-dismissible fade show" role="alert">
-        <i class="fas fa-exclamation-circle"></i> Your account is not activated, follow the link in the activation letter! <a href="{{ path('app_resend_confirmation') }}" class="alert-link">Resend Email</a>
+        <i class="fas fa-exclamation-circle"></i> {{ 'app.auth.active_profile'|trans }} <a href="{{ path('app_resend_confirmation') }}" class="alert-link">{{'app.auth.resend_email'|trans}}</a>
     </div>
 {% endif %}

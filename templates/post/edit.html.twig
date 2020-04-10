@@ -1,7 +1,15 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Edit {{ post.title }}{% endblock %}
+{% block title %}{{ 'app.edit'|trans }} {{ post.title }}{% endblock %}
 
 {% block main %}
-    {{ include('post/_form.html.twig', {'header': 'Edit ' ~ post.title, 'button_label': 'Update'}) }}
+    {{ include('post/_form.html.twig', {
+        'post' : post,
+        'header': 'Edit ' ~ post.title
+    }) }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('bs-custom-file-input') }}
 {% endblock %}

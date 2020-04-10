@@ -1,7 +1,16 @@
 {% extends 'post/index.html.twig' %}
 
+{% block title %}{{ 'post.user_posts'|trans }} {{ user.nickname }}{% endblock %}
+
+{% block search %}
+    {{ include('search/_form.html.twig', {
+        route : 'user_posts_search',
+        action : path('user_posts_search', {'nickname' : user.nickname})
+    }) }}
+{% endblock %}
+
 {% block posts_header %}
     <div class="text-center my-4">
-        <h1>{{ user.nickname }} posts <span class="badge badge-info">{{user.posts|length}}</span></h1>
+        <h1 class="mb-5">{{ user.nickname }} {{'post.posts'|trans|lower}} <span class="badge badge-info">{{user.posts|length}}</span></h1>
     </div>
 {% endblock %}

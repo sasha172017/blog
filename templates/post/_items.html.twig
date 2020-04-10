@@ -1,0 +1,91 @@
+{% if pagination is not empty %}
+
+    {{ include('post/_sort.html.twig', {count : pagination.totalItemCount}) }}
+
+    {% for i, post in pagination %}
+
+        <div class="card my-4 dynamic-shadow">
+
+            <div class="card-header">
+                {% for tag in post.tags %}
+                    <span class="badge badge-{{ color_by_key(tag.color) }}"><i class="fas fa-tags"></i> {{ tag.title }}</span>
+                {% endfor %}
+            </div>
+
+            {% if post.image is not empty %}
+                <img class="card-img rounded-0" src="{{ asset('uploads/posts/' ~ post.image)}}" alt="">
+            {% endif %}
+            <div class="card-body">
+                <h2 class="card-title js-mark">{{ post.title }}</h2>
+                <p class="card-text js-mark">
+                    {{ post.summary }}
+                </p>
+
+                <div class="d-flex justify-content-between">
+
+                    <a href="{{ path('post_show', {'slug' : post.slug}) }}" class="btn btn-primary btn-sm">{{ 'post.read_more'|trans }}</a>
+
+                    {% if app.user %}
+                        {% if in_bookmark(app.user, post) %}
+                            <a href="{{ path('user_remove_from_bookmarks', {'slug' : post.slug}) }}" class="btn btn-outline-secondary btn-sm" data-toggle="tooltip" data-placement="top" data-html="true" title="{{ 'post.bookmarks.remove'|trans }}"><i class="far fa-bookmark"></i></a>
+                        {% else %}
+                            <a href="{{ path('user_add_to_bookmarks', {'slug' : post.slug}) }}" id="add-to-bookmarks" class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" data-html="true" title="{{ 'post.bookmarks.add'|trans }}"><i class="far fa-bookmark"></i></a>
+                        {% endif %}
+                    {% endif %}
+
+                </div>
+
+            </div>
+            <div class="card-footer text-muted d-flex justify-content-between">
+
+                <div class="d-flex">
+                    <div class="mr-3" data-toggle="tooltip" data-placement="top" data-html="true" title="{{ 'post.views'|trans }}: {{ post.views }}">
+                        <i class="far fa-eye"></i> {{ post.views }}
+                    </div>
+                    <div class="mr-3" data-toggle="tooltip" data-placement="top" data-html="true" title="{{ 'post.comments'|trans }}: {{ post.comments|length }}">
+                        <i class="far fa-comments"></i> {{ post.comments|length }}
+                    </div>
+                    <div class="mr-3" data-toggle="tooltip" data-placement="top" data-html="true" title="{{ 'post.rating.title'|trans }}: {{ post.rating }}<br><i class='fas fa-long-arrow-alt-up'></i>{{ post.ratingUp }} <i class='fas fa-long-arrow-alt-down'></i>{{ post.ratingDown }}">
+                        <i class="fas fa-long-arrow-alt-up"></i>
+                        {% if post.rating > 0 %}
+                            <span class="text-success">+{{ post.rating }}</span>
+                        {% else %}
+                            <span class="text-danger">{{ post.rating }}</span>
+                        {% endif %}
+                        <i class="fas fa-long-arrow-alt-down"></i>
+                    </div>
+
+                    <div class="mr-3" data-toggle="tooltip" data-placement="top" data-html="true" title="{{ 'post.bookmarks.user_count'|trans }}">
+                        <i class="far fa-bookmark"></i> {{ post.users|length }}
+                    </div>
+
+                </div>
+
+                <div class="d-flex">
+                    <div class="pointer mr-3" data-toggle="tooltip" data-placement="top" title="{{ 'app.created'|trans }}: {{ post.createdAt|localizedTimestamp }}">
+                        <small>
+                            <i class="far fa-calendar-alt"></i> {{ post.updatedAt|localizedTimestamp }}
+                        </small>
+                    </div>
+
+                    <div class="cursor-pointer" data-container="body" data-toggle="popover" data-placement="top" data-html="true" data-content=" <a href='{{ path('user_posts', {'nickname' : post.author.nickname}) }}'>{{ 'post.user_posts'|trans }}</a>">
+                        <small>
+                            <i class="fas fa-user"></i> {{ post.author.nickname }}
+                        </small>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+    {% endfor %}
+
+    <div class="d-flex justify-content-center">
+        {{ knp_pagination_render(pagination) }}
+    </div>
+
+{% else %}
+    <div class="alert alert-primary my-4 text-center" role="alert">{{ 'post.empty_items'|trans }}</div>
+{% endif %}
+

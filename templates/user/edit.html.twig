@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'app.auth.edit_profile'|trans }}{% endblock %}
+
+{% block content %}
+
+    {{ include('user/_form.html.twig', {'form' : form, 'user' : user}) }}
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('bs-custom-file-input') }}
+
+{% endblock %}

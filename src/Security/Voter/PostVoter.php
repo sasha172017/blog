@@ -47,6 +47,6 @@ class PostVoter extends Voter
 	 */
 	private function canEdit(Post $post, User $user): bool
 	{
-		return $user === $post->getAuthor();
+		return $user === $post->getAuthor() || in_array(User::ROLE_ADMIN, $user->getRoles());
 	}
 }

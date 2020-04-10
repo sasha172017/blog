@@ -4,19 +4,24 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\RegistrationFormType;
+use App\Form\SocialRegistrationFormType;
 use App\Repository\UserRepository;
 use App\Security\LoginFormAuthenticator;
 use App\Services\ConfirmationEmail;
+use App\Services\FileUploader;
 use App\Twig\BootstrapColorExtension;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
 use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class RegistrationController extends AbstractController
 {
@@ -26,16 +31,16 @@ class RegistrationController extends AbstractController
 	 * @param UserPasswordEncoderInterface $passwordEncoder
 	 * @param GuardAuthenticatorHandler    $guardHandler
 	 * @param LoginFormAuthenticator       $authenticator
-	 *
 	 * @param TokenGeneratorInterface      $generator
-	 *
 	 * @param ConfirmationEmail            $email
+	 * @param FileUploader                 $fileUploader
+	 * @param string                       $userAvatarsDirectory
 	 *
 	 * @return Response
-	 * @throws \Exception
 	 * @throws TransportExceptionInterface
+	 * @throws Exception
 	 */
-	public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder, GuardAuthenticatorHandler $guardHandler, LoginFormAuthenticator $authenticator, TokenGeneratorInterface $generator, ConfirmationEmail $email): Response
+	public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder, GuardAuthenticatorHandler $guardHandler, LoginFormAuthenticator $authenticator, TokenGeneratorInterface $generator, ConfirmationEmail $email, FileUploader $fileUploader): Response
 	{
 		$user = new User();
 		$form = $this->createForm(RegistrationFormType::class, $user);
@@ -51,6 +56,13 @@ class RegistrationController extends AbstractController
 				)
 			);
 
+			$avatar = $form->get('avatar')->getData();
+			if ($avatar)
+			{
+				$imageFileName = $fileUploader->upload($avatar, 'user_avatars_directory');
+				$user->setAvatar($imageFileName);
+			}
+
 			$user
 				->setVerificationToken($generator->generateToken())
 				->setColor(random_int(0, count(BootstrapColorExtension::COLORS_CLASS) - 1));
@@ -60,7 +72,7 @@ class RegistrationController extends AbstractController
 			$entityManager->flush();
 
 			// confirmation account
-			$email->send($user);
+			$email->send($user);    
 
 			return $guardHandler->authenticateUserAndHandleSuccess(
 				$user,
@@ -77,12 +89,14 @@ class RegistrationController extends AbstractController
 
 	/**
 	 * @Route("/confirmation/{token}", name="app_confirmation_register")
-	 * @param UserRepository $userRepository
-	 * @param string         $token
+	 * @param UserRepository      $userRepository
+	 * @param string              $token
+	 *
+	 * @param TranslatorInterface $translator
 	 *
 	 * @return RedirectResponse
 	 */
-	public function confirmation(UserRepository $userRepository, string $token): RedirectResponse
+	public function confirmation(UserRepository $userRepository, string $token, TranslatorInterface $translator): RedirectResponse
 	{
 		$user = $userRepository->findOneBy(['active' => false, 'verificationToken' => $token]);
 		if ($user !== null)
@@ -95,11 +109,11 @@ class RegistrationController extends AbstractController
 			$entityManager->persist($user);
 			$entityManager->flush();
 
-			$this->addFlash('success', sprintf('%s Congratulations, your account is activated!', '<i class="far fa-thumbs-up"></i>'));
+			$this->addFlash('success', sprintf($translator->trans('app.auth.messages.confirmation.success'), '<i class="far fa-thumbs-up"></i>'));
 		}
 		else
 		{
-			$this->addFlash('danger', 'Failed to activate a profile!');
+			$this->addFlash('danger', $translator->trans('app.auth.messages.confirmation.error'));
 		}
 
 
@@ -108,17 +122,75 @@ class RegistrationController extends AbstractController
 
 	/**
 	 * @Route("/resend-confiramtion", name="app_resend_confirmation")
-	 * @param ConfirmationEmail $email
+	 * @param ConfirmationEmail   $email
+	 *
+	 * @param TranslatorInterface $translator
 	 *
 	 * @return RedirectResponse
 	 * @throws TransportExceptionInterface
 	 */
-	public function resendConfirmation(ConfirmationEmail $email): RedirectResponse
+	public function resendConfirmation(ConfirmationEmail $email, TranslatorInterface $translator): RedirectResponse
 	{
 		$user = $this->getUser();
-		$email->send($user);
+		if ($email->send($user))
+		{
+			$this->addFlash('success', $translator->trans('app.auth.messages.resend_confirmation.success'));
+		}
+		else
+		{
+			$this->addFlash('danger', $translator->trans('app.auth.messages.resend_confirmation.error'));
+		}
 
 		return $this->redirectToRoute('blog_index');
+	}
+
+	/**
+	 * @Route("/continue-register", name="app_social_register")
+	 * @param Request                   $request
+	 * @param SessionInterface          $session
+	 * @param GuardAuthenticatorHandler $guardHandler
+	 * @param LoginFormAuthenticator    $authenticator
+	 * @param FileUploader              $fileUploader
+	 *
+	 * @return Response
+	 * @throws Exception
+	 */
+	public function continueRegister(Request $request, SessionInterface $session, GuardAuthenticatorHandler $guardHandler, LoginFormAuthenticator $authenticator, FileUploader $fileUploader)
+	{
+		$user = $this->getUser();
+
+		$form = $this->createForm(SocialRegistrationFormType::class, $user);
+		$form->handleRequest($request);
+
+		if ($form->isSubmitted() && $form->isValid())
+		{
+			$avatar = $form->get('avatar')->getData();
+			if ($avatar)
+			{
+				$imageFileName = $fileUploader->upload($avatar, 'user_avatars_directory');
+				$user->setAvatar($imageFileName);
+			}
+
+			$user->setColor(random_int(0, count(BootstrapColorExtension::COLORS_CLASS) - 1));
+			$user->setRoles(array_merge($user->getRoles(), [User::ROLE_SOCIAL_USER]));
+
+			$entityManager = $this->getDoctrine()->getManager();
+			$entityManager->persist($user);
+			$entityManager->flush();
+
+			$session->remove('social_github');
+
+			return $guardHandler->authenticateUserAndHandleSuccess(
+				$user,
+				$request,
+				$authenticator,
+				'main'
+			);
+		}
+
+		return $this->render('registration/register.html.twig', [
+			'registrationForm' => $form->createView(),
+		]);
 	}
 
 }

@@ -9,6 +9,9 @@
         </div>
 
         <div class="card-body">
+
+            {{ include('default/_flash_messages.html.twig') }}
+
             {% if error %}
                 <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
             {% endif %}
@@ -19,10 +22,14 @@
                 </div>
             {% endif %}
 
+            <a class="github-auth d-flex align-items-center justify-content-center mb-3 mx-auto" href="{{ path('hwi_oauth_service_redirect', {'service': 'github' }) }}">
+                <span class="pr-2">{{ 'app.auth.with'|trans }}</span>
+                <i class="fab fa-github fa-3x"></i>
+            </a>
 
-            <label for="inputEmail">Email</label>
+            <label for="inputEmail">{{'app.auth.email'|trans}}</label>
             <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" required autofocus>
-            <label for="inputPassword">Password</label>
+            <label for="inputPassword">{{'app.auth.password'|trans}}</label>
             <input type="password" name="password" id="inputPassword" class="form-control" required>
 
             <input type="hidden" name="_csrf_token"
@@ -39,10 +46,13 @@
                     </label>
                 </div>
             #}
+
+
+
         </div>
 
         <div class="card-footer text-center">
-            <button class="btn btn-primary" type="submit">Sign in</button>
+            <button class="btn btn-primary" type="submit">{{'app.sign_in'|trans}}</button>
         </div>
 
     </div>

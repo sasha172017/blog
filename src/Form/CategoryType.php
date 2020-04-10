@@ -2,7 +2,7 @@
 
 namespace App\Form;
 
-use App\Entity\Category;
+use App\Entity\Tag;
 use App\Twig\BootstrapColorExtension;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -27,7 +27,7 @@ class CategoryType extends AbstractType
 	public function configureOptions(OptionsResolver $resolver)
 	{
 		$resolver->setDefaults([
-			'data_class' => Category::class,
+			'data_class' => Tag::class,
 		]);
 	}
 }

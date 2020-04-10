@@ -1,0 +1,12 @@
+<div class="collapse {{ app.request.get('_route') == route ? 'show' : '' }}" id="search">
+    <form id="search-form" action="{{ action }}" method="GET">
+        <div class="input-group mt-4 bg-light">
+            <input name="q" type="text" class="form-control border-info" placeholder="Поиск" value="{{ app.request.get('q') }}" aria-describedby="btn-group" autocomplete="off" >
+            <div class="input-group-append" id="btn-group">
+                <a id="reset-search" href="{{ action }}" class=" btn btn-outline-info"><i class="fas fa-times"></i></a>
+                <button class=" btn btn-info" type="submit"><i class="fas fa-search"></i></button>
+            </div>
+        </div>
+
+    </form>
+</div>

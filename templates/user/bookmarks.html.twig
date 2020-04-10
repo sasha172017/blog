@@ -1,7 +1,16 @@
 {% extends 'post/index.html.twig' %}
 
+{% block title %}{{ 'post.bookmarks.title'|trans }} {{user.bookmarks|length}}{% endblock %}
+
+{% block search %}
+    {{ include('search/_form.html.twig', {
+        route : 'user_bookmarks_posts_search',
+        action : path('user_bookmarks_posts_search', {'nickname' : user.nickname})
+    }) }}
+{% endblock %}
+
 {% block posts_header %}
     <div class="text-center my-4">
-        <h1>Bookmarks <span class="badge badge-warning">{{user.bookmarks|length}}</span></h1>
+        <h1>{{ 'post.bookmarks.title'|trans }} <span class="badge badge-warning">{{user.bookmarks|length}}</span></h1>
     </div>
 {% endblock %}

@@ -26,3 +26,13 @@ yarn-error.log
 ###> lexik/jwt-authentication-bundle ###
 /config/jwt/*.pem
 ###< lexik/jwt-authentication-bundle ###
+.gitignore
+
+###> liip/imagine-bundle ###
+/public/media/cache/
+###< liip/imagine-bundle ###
+
+/public/uploads/avatars/
+/public/uploads/posts/
+
+docker-compose.yml

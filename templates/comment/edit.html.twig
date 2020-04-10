@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Edit comment{% endblock %}
+{% block title %}{{ 'comment.edit'|trans }}{% endblock %}
 
 {% block main %}
-    {{ include('comment/_form.html.twig', {'header': 'Edit comment', 'button_label': 'Update'}) }}
+    {{ include('comment/_form.html.twig', {'header': 'comment.edit'|trans, 'button_label': 'app.save'|trans}) }}
 {% endblock %}

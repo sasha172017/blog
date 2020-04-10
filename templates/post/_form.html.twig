@@ -7,11 +7,26 @@
     </div>
 
     <div class="card-body">
-        {{ form_widget(form) }}
+        {{ form_row(form.title) }}
+        {{ form_row(form.tags) }}
+        {{ form_row(form.summary) }}
+
+        {% if post.image is not empty %}
+            <div class="card my-3">
+                <a href="{{ asset('uploads/posts/' ~ post.image) }}" target="_blank">
+                    <img class="card-img-top" src="{{ asset('uploads/posts/' ~ post.image) }}" alt="">
+                </a>
+
+            </div>
+        {% endif %}
+
+        
+        {{ form_row(form.image) }}
+        {{ form_row(form.content) }}
     </div>
 
     <div class="card-footer text-center">
-        <button class="btn btn-success ">{{ button_label|default('Save') }}</button>
+        <button class="btn btn-success ">{{ button_label|default('app.save'|trans) }}</button>
     </div>
 
 </div>

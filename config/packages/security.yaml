@@ -24,17 +24,15 @@ security:
             guard:
                 authenticators:
                     - lexik_jwt_authentication.jwt_token_authenticator
-
-        main:
-            anonymous: true
-
             json_login:
-                check_path: /authentication_token
+                check_path: /api/authentication
                 username_path: email
                 password_path: password
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
 
+        main:
+            anonymous: true
             guard:
                 authenticators:
                     - App\Security\LoginFormAuthenticator
@@ -42,6 +40,19 @@ security:
                 path: app_logout
                 # where to redirect after logout
                 # target: app_any_route
+
+
+            oauth:
+                resource_owners:
+                    github:          "/login/check-github"
+                login_path:        /login
+                use_forward:       false
+                failure_handler:   social_authentication_failure_handler
+                success_handler:   social_authentication_success_handler
+                default_target_path: "/continue-register"
+
+                oauth_user_provider:
+                    service: my.oauth_aware.user_provider.service
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#firewalls-authentication
@@ -52,4 +63,5 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        - { path: ^/api/categories, roles: ROLE_USER }
+        - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+#        - { path: ^/api/tags, roles: ROLE_USER }

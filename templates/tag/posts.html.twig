@@ -1,0 +1,14 @@
+{% extends 'post/index.html.twig' %}
+{% block title %}{{ tag.title }}{% endblock %}
+{% block search %}
+    {{ include('search/_form.html.twig', {
+        route : 'tag_posts_search',
+        action : path('tag_posts_search', {'slug' : tag.slug})
+    }) }}
+{% endblock %}
+
+{% block posts_header %}
+    <div class="text-center my-4">
+        <h1 class="mb-5">{{ tag.title }} </h1>
+    </div>
+{% endblock %}

@@ -1,17 +1,16 @@
 <div class="card my-4">
     <div class="card-header">
-        <h5 class="mb-0">Post actions</h5>
+        <h5 class="mb-0">{{ 'post.actions'|trans }}</h5>
     </div>
-
     {% if is_granted(constant('app\\Entity\\User::ROLE_USER_CONFIRMED')) %}
 
         <div class="p-3 d-flex justify-content-around">
 
             <div class="btn-group btn-group-sm w-100" role="group">
                 <a href="{{ path('post_rating_up', {'slug' : post.slug}) }}" class="btn btn-outline-success"><i class="fas fa-long-arrow-alt-up"></i>
-                    Rating up</a>
+                    {{ 'post.rating.up'|trans }}</a>
                 <a href="{{ path('post_rating_down', {'slug' : post.slug}) }}" class="btn btn-outline-danger"><i class="fas fa-long-arrow-alt-down"></i>
-                    Rating down</a>
+                    {{ 'post.rating.down'|trans }}</a>
             </div>
 
         </div>
@@ -19,38 +18,67 @@
     {% endif %}
 
     <hr class="m-0">
+
+    <div class="py-2 px-3">
+        <small>
+            <span class="text-muted">{{ 'post.author'|trans }}:</span>
+            <a class="font-weight-bold" href="{{ path('user_posts', {'nickname' : post.author.nickname}) }}">{{ post.author.nickname }}</a>
+        </small>
+    </div>
+
+    <hr class="m-0">
     <div class="py-2 px-3 ">
-        <small>Total votes: {{ post.ratingUp + post.ratingDown }}</small>
+        <small>
+            <span class="text-muted">{{ 'post.rating.title'|trans }}:</span>
+            <span>{{ post.rating }}</span>
+        </small>
     </div>
 
     <hr class="m-0">
     <div class="py-2 px-3">
-        <small>Rating up: {{ post.ratingUp }}</small>
+        <small>
+            <span class="text-muted">{{ 'post.rating.up'|trans }}:</span>
+            <span>{{ post.ratingUp }}</span>
+        </small>
     </div>
 
     <hr class="m-0">
     <div class="py-2 px-3">
-        <small>Rating down: {{ post.ratingDown }}</small>
+        <small>
+            <span class="text-muted">{{ 'post.rating.down'|trans }}:</span>
+            <span>{{ post.ratingDown }}</span>
+        </small>
     </div>
 
     <hr class="m-0">
     <div class="py-2 px-3">
-        <small>Author:
-            <a href="{{ path('user_posts', {'nickname' : post.author.nickname}) }}">{{ post.author.nickname }}</a></small>
+        <small>
+            <span class="text-muted">{{ 'post.views'|trans }}:</span>
+            <span>{{ post.views }}</span>
+        </small>
     </div>
 
     <hr class="m-0">
     <div class="py-2 px-3">
-        <small>Views: {{ post.views }}</small>
+        <small>
+            <span class="text-muted">{{ 'post.bookmarks.user_count'|trans }}:</span>
+            <span> {{ post.users|length }}</span>
+        </small>
     </div>
 
     <hr class="m-0">
     <div class="py-2 px-3">
-        <small>Updated: {{ post.updatedAt|date('d F Y, H:m') }}</small>
+        <small>
+            <span class="text-muted">{{ 'app.updated'|trans }}:</span>
+            <span>{{ post.updatedAt|localizedTimestamp }}</span>
+        </small>
     </div>
 
     <hr class="m-0">
     <div class="py-2 px-3">
-        <small>Created: {{ post.createdAt|date('d F Y, H:m') }}</small>
+        <small>
+            <span class="text-muted">{{ 'app.created'|trans }}:</span>
+            <span>{{ post.createdAt|localizedTimestamp }}</span>
+        </small>
     </div>
 </div>
