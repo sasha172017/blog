@@ -13,7 +13,7 @@
             </div>
 
             {% if post.image is not empty %}
-                <img class="card-img rounded-0" src="{{ asset('uploads/posts/' ~ post.image)}}" alt="">
+                <img class="card-img rounded-0" src="{{ asset('uploads/posts/' ~ post.image)|imagine_filter('post_thumb')}}" alt="">
             {% endif %}
             <div class="card-body">
                 <h2 class="card-title js-mark">{{ post.title }}</h2>
